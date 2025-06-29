@@ -30,3 +30,33 @@ obj
 
 # Styles Generated Code
 *.scss.ts
+
+# Angular cache and build artifacts
+.angular/
+**/\.angular/**
+*.cache
+.cache/
+
+# Additional Node.js artifacts
+.npm
+.nyc_output
+.grunt
+bower_components
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# TypeScript compiled files
+*.js.map
+
+# Temporary files
+*.tmp
+*.temp
