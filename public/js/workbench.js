@@ -149,21 +149,30 @@ class WorkbenchManager {
     getDashboardHTML() {
         return `
             <div class="dashboard-content">
-                <h2 class="dashboard-title">🚀 Uptime Dashboard</h2>
+                <h2 class="dashboard-title">
+                    <i class="material-icons-outlined">rocket_launch</i>
+                    Uptime Dashboard
+                </h2>
                 <div class="dashboard-grid">
                     <div class="metric-card uptime">
-                        <h3 class="metric-title uptime">⏱️ Server Uptime</h3>
+                        <h3 class="metric-title uptime">
+                            <i class="material-icons-outlined">schedule</i>
+                            Server Uptime
+                        </h3>
                         <p class="metric-value uptime" id="uptime-display">Loading...</p>
                         <p class="metric-label uptime">seconds online</p>
                     </div>
                     <div class="metric-card time">
-                        <h3 class="metric-title time">🕒 Current Time</h3>
+                        <h3 class="metric-title time">
+                            <i class="material-icons-outlined">access_time</i>
+                            Current Time
+                        </h3>
                         <p class="metric-value time" id="time-display">Loading...</p>
                         <p class="metric-label time">server time</p>
                     </div>
                 </div>
                 
-                <!-- Teams Messages Section with Vibrant Styling -->
+                <!-- Teams Messages Section with Material Design 3 -->
                 <div class="teams-messages-card">
                     <div class="teams-header">
                         <div class="teams-live-toggle mock" onclick="window.workbenchManager.toggleDataModel()">
@@ -171,7 +180,9 @@ class WorkbenchManager {
                             <span class="toggle-text">Mock Data</span>
                         </div>
                         <h3 class="teams-title">
-                            <span class="teams-icon">�</span>
+                            <span class="teams-icon">
+                                <i class="material-icons-outlined">groups</i>
+                            </span>
                             Teams Messages
                         </h3>
                         <p class="teams-subtitle">Recent activity from monitored channels</p>
@@ -188,7 +199,9 @@ class WorkbenchManager {
                         </div>
                         
                         <div id="teams-no-messages" class="teams-no-messages" style="display: none;">
-                            <div class="teams-no-messages-icon">💬</div>
+                            <div class="teams-no-messages-icon">
+                                <i class="material-icons-outlined">forum</i>
+                            </div>
                             <p>No messages found</p>
                             <p>Configure your Teams channels to start monitoring</p>
                         </div>
@@ -196,18 +209,21 @@ class WorkbenchManager {
                     
                     <div class="teams-actions">
                         <button class="teams-btn" onclick="window.workbenchManager.refreshTeamsMessages()">
-                            <span>🔄</span>
-                            Refresh Messages
+                            <i class="material-icons-outlined">refresh</i>
+                            <span>Refresh Messages</span>
                         </button>
                         <button class="teams-btn secondary" onclick="window.workbenchManager.configureTeamsChannels()">
-                            <span>⚙️</span>
-                            Configure Channels
+                            <i class="material-icons-outlined">settings</i>
+                            <span>Configure Channels</span>
                         </button>
                     </div>
                 </div>
                 
                 <div class="metric-card status">
-                    <h3 class="metric-title status">📊 System Status</h3>
+                    <h3 class="metric-title status">
+                        <i class="material-icons-outlined">analytics</i>
+                        System Status
+                    </h3>
                     <div class="status-indicator">
                         <div class="status-dot"></div>
                         <span class="status-text">All systems operational</span>
@@ -462,17 +478,19 @@ class WorkbenchManager {
                             <div class="teams-author-name">${message.author}</div>
                         </div>
                         <div class="teams-message-time">
-                            <span class="teams-time-icon">🕒</span>
+                            <i class="material-icons-outlined teams-time-icon">schedule</i>
                             <span>${message.time}</span>
                         </div>
                     </div>
                     <div class="teams-message-content">${message.content}</div>
                     <div class="teams-message-actions">
                         <button class="teams-action-btn" onclick="window.workbenchManager.openInTeams('${message.id}')">
-                            <span>🔗</span> View in Teams
+                            <i class="material-icons-outlined">open_in_new</i>
+                            <span>View in Teams</span>
                         </button>
                         <button class="teams-action-btn" onclick="window.workbenchManager.replyToMessage('${message.id}')">
-                            <span>💬</span> Reply
+                            <i class="material-icons-outlined">reply</i>
+                            <span>Reply</span>
                         </button>
                     </div>
                 </div>
@@ -536,21 +554,23 @@ class WorkbenchManager {
                             <div class="teams-author-avatar ${message.isLive ? 'live-avatar' : ''}">${message.avatar}</div>
                             <div class="teams-author-name">
                                 ${message.author}
-                                ${message.isLive ? '<span class="live-badge">🔴 LIVE</span>' : ''}
+                                ${message.isLive ? '<span class="live-badge"><i class="material-icons-outlined">radio_button_checked</i> LIVE</span>' : ''}
                             </div>
                         </div>
                         <div class="teams-message-time">
-                            <span class="teams-time-icon">🕒</span>
+                            <i class="material-icons-outlined teams-time-icon">schedule</i>
                             <span>${message.time}</span>
                         </div>
                     </div>
                     <div class="teams-message-content">${message.content}</div>
                     <div class="teams-message-actions">
                         <button class="teams-action-btn" onclick="window.workbenchManager.openInTeams('${message.id}')">
-                            <span>🔗</span> View in Teams
+                            <i class="material-icons-outlined">open_in_new</i>
+                            <span>View in Teams</span>
                         </button>
                         <button class="teams-action-btn" onclick="window.workbenchManager.replyToMessage('${message.id}')">
-                            <span>💬</span> Reply
+                            <i class="material-icons-outlined">reply</i>
+                            <span>Reply</span>
                         </button>
                     </div>
                 </div>
