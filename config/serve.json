@@ -1,0 +1,18 @@
+{
+  "port": 4321,
+  "https": true,
+  "initialPage": "https://localhost:4321/temp/workbench.html",
+  "serveConfigurations": {
+    "default": {
+      "https": true,
+      "port": 4321,
+      "api": {
+        "/api/*": {
+          "target": "http://localhost:3000",
+          "secure": false,
+          "changeOrigin": true
+        }
+      }
+    }
+  }
+}

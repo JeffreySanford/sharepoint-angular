@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPFx Development Workbench</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/public/css/workbench.css">
+</head>
+<body>
+    <div class="workbench">
+        <div class="header">
+            <h1>SharePoint Framework Development Workbench</h1>
+            <p>Test your web parts in this local development environment</p>
+        </div>
+        
+        <div class="webpart-container">
+            <div id="uptime-status-webpart">
+                <div class="webpart-placeholder">Loading Uptime Status Web Part...</div>
+            </div>
+        </div>
+
+        <div class="dev-links">
+            <p><strong>Development Links:</strong></p>
+            <ul>
+                <li><a href="/api/uptime" target="_blank">API: Uptime</a></li>
+                <li><a href="/api/time" target="_blank">API: Current Time</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="/public/js/workbench.config.js"></script>
+    <script src="/public/js/workbench.js"></script>
+</body>
+</html>
