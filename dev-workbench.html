@@ -33,13 +33,38 @@
         <div class="dev-links">
             <p><strong>Development Links:</strong></p>
             <ul>
+                <li><a href="/angular-app/" target="_blank">🎯 Angular Material Dashboard (Standalone)</a></li>
                 <li><a href="/api/uptime" target="_blank">API: Uptime</a></li>
                 <li><a href="/api/time" target="_blank">API: Current Time</a></li>
+                <li><a href="/api/reports/all" target="_blank">API: Reports Data</a></li>
             </ul>
+            <div style="margin-top: 15px; padding: 10px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #1976d2;">
+                <p style="margin: 0; color: #1565c0; font-size: 14px;">
+                    ✅ <strong>Integration Status:</strong> The Angular Material Dashboard is now integrated into the SPFx web part above. You can also access it standalone at <a href="/angular-app/" style="color: #1976d2;">/angular-app/</a> for testing.
+                </p>
+            </div>
         </div>
     </div>
 
     <script src="/public/js/workbench.config.js"></script>
-    <script src="/public/js/workbench.js"></script>
+    <script>
+        // Simple workbench initialization without interfering with webpack
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 SPFx Development Workbench Ready');
+            
+            // Let webpack handle the web part initialization
+            // The bundle.js will automatically initialize the web part
+            
+            // Check if web part loads within 5 seconds
+            setTimeout(function() {
+                const container = document.getElementById('uptime-status-webpart');
+                const placeholder = container?.querySelector('.webpart-placeholder');
+                
+                if (placeholder && placeholder.textContent.includes('Loading')) {
+                    console.warn('⚠️ Web part may not have loaded. Check the browser console for errors.');
+                }
+            }, 5000);
+        });
+    </script>
 </body>
 </html>

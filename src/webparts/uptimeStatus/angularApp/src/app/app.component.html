@@ -1,149 +1,124 @@
 <div class="app-container">
   <!-- Header with Material 3 toolbar -->
   <mat-toolbar color="primary" class="app-header">
-    <mat-icon class="header-icon">timeline</mat-icon>
+    <mat-icon class="header-icon">dashboard</mat-icon>
     <span class="header-title">{{ title }}</span>
     <span class="spacer"></span>
-    <button mat-fab 
-            color="accent" 
-            class="refresh-button"
-            (click)="refreshData()"
-            [disabled]="isLoading"
-            matTooltip="Refresh Data">
-      <mat-icon>refresh</mat-icon>
+    <button mat-icon-button 
+            class="notification-button"
+            [matBadge]="notificationCount"
+            matBadgeColor="accent"
+            matTooltip="Notifications">
+      <mat-icon>notifications</mat-icon>
+    </button>
+    <button mat-icon-button 
+            matTooltip="Settings">
+      <mat-icon>settings</mat-icon>
     </button>
   </mat-toolbar>
 
-  <!-- Main content with Material 3 cards -->
+  <!-- Main content with tabs -->
   <div class="content-container">
-    
-    <!-- Loading state -->
-    <div *ngIf="isLoading" class="loading-container">
-      <mat-card class="loading-card">
-        <mat-card-content>
-          <div class="loading-content">
-            <mat-spinner color="primary"></mat-spinner>
-            <p class="loading-text">Loading server status...</p>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-
-    <!-- Status cards -->
-    <div *ngIf="!isLoading" class="status-grid">
+    <mat-tab-group class="main-tabs" 
+                   animationDuration="300ms"
+                   [selectedIndex]="selectedTabIndex"
+                   (selectedTabChange)="onTabChange($event)">
       
-      <!-- Server Uptime Card -->
-      <mat-card class="status-card uptime-card" appearance="outlined">
-        <mat-card-header>
-          <div mat-card-avatar class="uptime-avatar">
-            <mat-icon class="avatar-icon">schedule</mat-icon>
+      <!-- Home Tab -->
+      <mat-tab label="Home">
+        <ng-template matTabContent>
+          <div class="tab-content">
+            <app-home></app-home>
           </div>
-          <mat-card-title>Server Uptime</mat-card-title>
-          <mat-card-subtitle>System availability duration</mat-card-subtitle>
-        </mat-card-header>
-        
-        <mat-card-content>
-          <div class="metric-display">
-            <div class="metric-value" *ngIf="uptime$ | async as uptimeData">
-              {{ formatUptime(uptimeData.uptime) }}
-            </div>
-            <mat-chip-listbox class="status-chips">
-              <mat-chip-option selected>
-                <mat-icon matChipAvatar>check_circle</mat-icon>
-                Online
-              </mat-chip-option>
-            </mat-chip-listbox>
+        </ng-template>
+      </mat-tab>
+
+      <!-- Metrics Tab -->
+      <mat-tab label="Metrics">
+        <ng-template matTabContent>
+          <div class="tab-content">
+            <app-metrics></app-metrics>
           </div>
-        </mat-card-content>
+        </ng-template>
+      </mat-tab>
 
-        <mat-divider></mat-divider>
-        
-        <mat-card-actions align="end">
-          <button mat-button color="primary">
-            <mat-icon>info</mat-icon>
-            Details
-          </button>
-        </mat-card-actions>
-      </mat-card>
-
-      <!-- Current Time Card -->
-      <mat-card class="status-card time-card" appearance="outlined">
-        <mat-card-header>
-          <div mat-card-avatar class="time-avatar">
-            <mat-icon class="avatar-icon">access_time</mat-icon>
+      <!-- Teams Messages Tab -->
+      <mat-tab label="Teams">
+        <ng-template matTabContent>
+          <div class="tab-content">
+            <app-teams-messages></app-teams-messages>
           </div>
-          <mat-card-title>Current Time</mat-card-title>
-          <mat-card-subtitle>Server timestamp</mat-card-subtitle>
-        </mat-card-header>
-        
-        <mat-card-content>
-          <div class="metric-display">
-            <div class="metric-value" *ngIf="currentTime$ | async as timeData">
-              {{ formatTime(timeData.time) }}
-            </div>
-            <mat-chip-listbox class="status-chips">
-              <mat-chip-option selected>
-                <mat-icon matChipAvatar>sync</mat-icon>
-                Live
-              </mat-chip-option>
-            </mat-chip-listbox>
+        </ng-template>
+      </mat-tab>
+
+      <!-- Reports Tab -->
+      <mat-tab label="Reports">
+        <ng-template matTabContent>
+          <div class="tab-content">
+            <app-reports></app-reports>
           </div>
-        </mat-card-content>
+        </ng-template>
+      </mat-tab>
 
-        <mat-divider></mat-divider>
-        
-        <mat-card-actions align="end">
-          <button mat-button color="primary">
-            <mat-icon>schedule</mat-icon>
-            Timezone
-          </button>
-        </mat-card-actions>
-      </mat-card>
-
-    </div>
-
-    <!-- Teams Messages Section -->
-    <div *ngIf="!isLoading" class="teams-section">
-      <app-teams-messages></app-teams-messages>
-    </div>
-
-    <!-- Additional Status Info -->
-    <mat-card class="info-card" appearance="outlined" *ngIf="!isLoading">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>info</mat-icon>
-          System Information
-        </mat-card-title>
-      </mat-card-header>
-      
-      <mat-card-content>
-        <div class="info-grid">
-          <div class="info-item">
-            <mat-icon class="info-icon">api</mat-icon>
-            <div class="info-text">
-              <span class="info-label">API Status</span>
-              <span class="info-value">Active</span>
-            </div>
-          </div>
-          
-          <div class="info-item">
-            <mat-icon class="info-icon">update</mat-icon>
-            <div class="info-text">
-              <span class="info-label">Auto Refresh</span>
-              <span class="info-value">Every 5 seconds</span>
+      <!-- Admin Tab -->
+      <mat-tab label="Admin">
+        <ng-template matTabContent>
+          <div class="tab-content">
+            <div class="admin-panel">
+              <mat-card class="admin-card">
+                <mat-card-header>
+                  <mat-card-title>
+                    <mat-icon>admin_panel_settings</mat-icon>
+                    Administration Panel
+                  </mat-card-title>
+                  <mat-card-subtitle>Manage your Agile SAFe environment</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="admin-actions">
+                    <mat-list>
+                      <mat-list-item>
+                        <mat-icon matListItemIcon>group</mat-icon>
+                        <div matListItemTitle>Manage Teams</div>
+                        <div matListItemLine>Configure team settings and members</div>
+                        <button mat-icon-button>
+                          <mat-icon>arrow_forward</mat-icon>
+                        </button>
+                      </mat-list-item>
+                      <mat-divider></mat-divider>
+                      <mat-list-item>
+                        <mat-icon matListItemIcon>timeline</mat-icon>
+                        <div matListItemTitle>PI Configuration</div>
+                        <div matListItemLine>Set up Program Increment schedules</div>
+                        <button mat-icon-button>
+                          <mat-icon>arrow_forward</mat-icon>
+                        </button>
+                      </mat-list-item>
+                      <mat-divider></mat-divider>
+                      <mat-list-item>
+                        <mat-icon matListItemIcon>integration_instructions</mat-icon>
+                        <div matListItemTitle>Integrations</div>
+                        <div matListItemLine>Connect to Jira, Azure DevOps, and more</div>
+                        <button mat-icon-button>
+                          <mat-icon>arrow_forward</mat-icon>
+                        </button>
+                      </mat-list-item>
+                      <mat-divider></mat-divider>
+                      <mat-list-item>
+                        <mat-icon matListItemIcon>security</mat-icon>
+                        <div matListItemTitle>Security & Permissions</div>
+                        <div matListItemLine>Manage user access and roles</div>
+                        <button mat-icon-button>
+                          <mat-icon>arrow_forward</mat-icon>
+                        </button>
+                      </mat-list-item>
+                    </mat-list>
+                  </div>
+                </mat-card-content>
+              </mat-card>
             </div>
           </div>
-          
-          <div class="info-item">
-            <mat-icon class="info-icon">cloud</mat-icon>
-            <div class="info-text">
-              <span class="info-label">Environment</span>
-              <span class="info-value">Development</span>
-            </div>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
   </div>
 </div>

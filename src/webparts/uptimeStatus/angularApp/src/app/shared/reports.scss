@@ -1,0 +1,173 @@
+// Optimized Reports Section Styles
+.reports-section {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.reports-header .reports-hero-card {
+  background: linear-gradient(135deg, #1976d2, #1565c0);
+  color: white;
+  text-align: center;
+  
+  mat-card-header {
+    justify-content: center;
+    
+    mat-card-title {
+      font-size: 2rem;
+      font-weight: 600;
+      
+      mat-icon {
+        font-size: 2.5rem;
+        margin-right: 16px;
+        vertical-align: middle;
+      }
+    }
+  }
+}
+
+.reports-section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 32px 0 24px 0;
+  color: #1976d2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.infrastructure-report-grid,
+.safe-report-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.report-summary-card {
+  transition: transform 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+  }
+  
+  .report-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    mat-icon {
+      color: white;
+    }
+    
+    &.health-avatar { background: linear-gradient(135deg, #4caf50, #45a049); }
+    &.resources-avatar { background: linear-gradient(135deg, #2196f3, #1976d2); }
+    &.network-avatar { background: linear-gradient(135deg, #ff9800, #f57c00); }
+    &.services-avatar { background: linear-gradient(135deg, #9c27b0, #7b1fa2); }
+    &.epic-avatar { background: linear-gradient(135deg, #3f51b5, #303f9f); }
+    &.velocity-avatar { background: linear-gradient(135deg, #00bcd4, #0097a7); }
+    &.train-avatar { background: linear-gradient(135deg, #795548, #5d4037); }
+  }
+}
+
+// Shared styles for metrics
+.health-metric,
+.network-stat,
+.velocity-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  
+  .metric-info,
+  .stat-details,
+  .velocity-info {
+    display: flex;
+    flex-direction: column;
+    
+    .metric-label,
+    .stat-label,
+    .velocity-label {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    .metric-value,
+    .stat-value,
+    .velocity-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+      
+      &.healthy,
+      &.positive { color: #4caf50; }
+    }
+  }
+}
+
+.resource-item,
+.progress-item {
+  mat-progress-bar {
+    height: 8px;
+    border-radius: 4px;
+  }
+}
+
+.service-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #f9f9f9;
+  
+  .service-name {
+    flex: 1;
+    font-weight: 500;
+  }
+}
+
+.train-health {
+  text-align: center;
+  
+  .score-value {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #1976d2;
+  }
+  
+  .train-progress {
+    height: 12px;
+    border-radius: 6px;
+    margin: 16px 0 20px;
+  }
+}
+
+.network-chart-placeholder {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .infrastructure-report-grid,
+  .safe-report-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .reports-section { padding: 16px; }
+  .train-health .score-value { font-size: 2.5rem; }
+}
+
+@media (max-width: 480px) {
+  .health-metric,
+  .network-stat,
+  .velocity-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

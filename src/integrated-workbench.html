@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SharePoint + Angular Material Dashboard</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <!-- SharePoint workbench styles -->
+  <link rel="stylesheet" href="/public/css/workbench.css">
+  
+  <style>
+    /* Integration styles for seamless SPFx + Angular */
+    body {
+      margin: 0;
+      font-family: Roboto, 'Segoe UI', sans-serif;
+      background-color: #fef7ff;
+    }
+    
+    .workbench-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .workbench-header {
+      background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+    }
+    
+    .webpart-container {
+      background: white;
+      border-radius: 12px;
+      padding: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+      min-height: 600px;
+    }
+    
+    /* Hide the default app-root until we integrate it */
+    app-root {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    
+    /* Ensure Angular Material components work in SPFx context */
+    .mat-toolbar {
+      background: transparent !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="workbench-container">
+    <div class="workbench-header">
+      <h1 style="margin: 0; font-size: 24px; font-weight: 300;">
+        🚀 SharePoint Framework Development Workbench
+      </h1>
+      <p style="margin: 10px 0 0 0; opacity: 0.9; font-size: 16px;">
+        Angular 15 Material Dashboard integrated with SPFx
+      </p>
+    </div>
+    
+    <div class="webpart-container">
+      <div id="uptime-status-webpart">
+        <!-- This will be populated by the SPFx web part -->
+        <div class="webpart-placeholder" style="text-align: center; padding: 40px; color: #666;">
+          <div style="display: inline-block; width: 30px; height: 30px; border: 3px solid #f3f3f3; border-top: 3px solid #1976d2; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+          <p style="margin-top: 15px;">Loading SPFx Web Part...</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Integration point for Angular app -->
+    <div id="angular-integration-point" style="display: none;">
+      <app-root></app-root>
+    </div>
+    
+    <!-- Development info panel -->
+    <div style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #1976d2;">
+      <h3 style="margin: 0 0 10px 0; color: #1565c0; font-size: 16px;">🔧 Development Environment</h3>
+      <ul style="margin: 0; padding-left: 20px; color: #1565c0; font-size: 14px;">
+        <li><strong>Workbench:</strong> http://localhost:4200</li>
+        <li><strong>API Status:</strong> <span id="api-status">Checking...</span></li>
+        <li><strong>Angular Integration:</strong> <span id="angular-status">Loading...</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Include workbench configuration -->
+  <script src="/public/js/workbench.config.js"></script>
+  
+  <!-- Include the SPFx bundle -->
+  <script src="/bundle.js"></script>
+  
+  <!-- Simplified integration script -->
+  <script>
+    console.log('🚀 Starting Simplified Angular Integration...');
+    
+    class DirectAngularIntegration {
+      constructor() {
+        this.apiReady = false;
+        this.angularReady = false;
+      }
+      
+      init() {
+        this.checkApiStatus();
+        this.loadAngularDirectly();
+      }
+      
+      async checkApiStatus() {
+        try {
+          const response = await fetch('/api/uptime');
+          if (response.ok) {
+            this.apiReady = true;
+            document.getElementById('api-status').innerHTML = '✅ Connected';
+            document.getElementById('api-status').style.color = '#4caf50';
+            console.log('✅ API is ready');
+          } else {
+            throw new Error('API not responding');
+          }
+        } catch (error) {
+          document.getElementById('api-status').innerHTML = '❌ Disconnected';
+          document.getElementById('api-status').style.color = '#f44336';
+          console.error('❌ API connection failed:', error);
+        }
+      }
+      
+      loadAngularDirectly() {
+        // Load Angular Material CSS first
+        this.loadCSS('/styles.6ebe7572d8605f36.css');
+        
+        // Load Angular app scripts with known hashed filenames
+        this.loadAngularScripts([
+          '/runtime.9b4bceb37d0dc2b9.js',
+          '/polyfills.80fc3bd2f7d6428c.js',
+          '/main.689f4f7577df83b7.js'
+        ]);
+      }
+      
+      loadCSS(href) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = href;
+        document.head.appendChild(link);
+      }
+      
+      async loadAngularScripts(scriptUrls = []) {
+        try {
+          // If no URLs provided, use fallback
+          if (scriptUrls.length === 0) {
+            scriptUrls = [
+              '/runtime.9b4bceb37d0dc2b9.js',
+              '/polyfills.80fc3bd2f7d6428c.js',
+              '/main.689f4f7577df83b7.js'
+            ];
+          }
+          
+          // Load Angular scripts in order
+          for (const url of scriptUrls) {
+            await this.loadScript(url);
+          }
+          
+          console.log('✅ Angular scripts loaded:', scriptUrls);
+          this.initializeAngularIntegration();
+        } catch (error) {
+          console.error('❌ Failed to load Angular scripts:', error);
+          this.showFallbackContent();
+        }
+      }
+      
+      loadScript(src) {
+        return new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = src;
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      }
+      
+      initializeAngularIntegration() {
+        // Wait for Angular to bootstrap
+        let attempts = 0;
+        const maxAttempts = 20;
+        
+        const checkAngular = () => {
+          attempts++;
+          const appRoot = document.querySelector('app-root');
+          
+          if (appRoot && appRoot.innerHTML.trim() !== '') {
+            this.angularReady = true;
+            this.performIntegration();
+          } else if (attempts < maxAttempts) {
+            setTimeout(checkAngular, 500);
+          } else {
+            console.warn('⚠️ Angular did not bootstrap in time, showing fallback');
+            this.showFallbackContent();
+          }
+        };
+        
+        setTimeout(checkAngular, 1000);
+      }
+      
+      performIntegration() {
+        const webpartContainer = document.getElementById('uptime-status-webpart');
+        const angularRoot = document.querySelector('app-root');
+        
+        if (webpartContainer && angularRoot) {
+          // Clear the loading placeholder
+          webpartContainer.innerHTML = '';
+          
+          // Create wrapper for Angular app
+          const wrapper = document.createElement('div');
+          wrapper.style.cssText = 'width: 100%; min-height: 600px; background: #fef7ff;';
+          
+          // Move Angular app into the web part container
+          wrapper.appendChild(angularRoot);
+          webpartContainer.appendChild(wrapper);
+          
+          // Update status
+          document.getElementById('angular-status').innerHTML = '✅ Integrated';
+          document.getElementById('angular-status').style.color = '#4caf50';
+          
+          console.log('✅ Angular Material Dashboard successfully integrated!');
+        }
+      }
+      
+      showFallbackContent() {
+        const webpartContainer = document.getElementById('uptime-status-webpart');
+        if (webpartContainer) {
+          webpartContainer.innerHTML = `
+            <div style="padding: 20px; text-align: center;">
+              <h2 style="color: #1976d2; margin-bottom: 20px;">🚀 Uptime Dashboard</h2>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 20px; border-radius: 12px; border-left: 4px solid #1976d2;">
+                  <h3 style="margin: 0 0 12px 0; color: #1565c0;">⏱️ Server Uptime</h3>
+                  <p style="margin: 0; font-size: 28px; font-weight: bold; color: #0d47a1;" id="uptime-display">Loading...</p>
+                </div>
+                <div style="background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%); padding: 20px; border-radius: 12px; border-left: 4px solid #4caf50;">
+                  <h3 style="margin: 0 0 12px 0; color: #2e7d32;">🕒 Current Time</h3>
+                  <p style="margin: 0; font-size: 18px; font-weight: bold; color: #1b5e20;" id="time-display">Loading...</p>
+                </div>
+              </div>
+            </div>
+          `;
+          
+          // Load fallback data
+          this.loadFallbackData();
+          
+          document.getElementById('angular-status').innerHTML = '⚠️ Fallback';
+          document.getElementById('angular-status').style.color = '#ff9800';
+        }
+      }
+      
+      async loadFallbackData() {
+        try {
+          if (this.apiReady) {
+            const [uptimeResponse, timeResponse] = await Promise.all([
+              fetch('/api/uptime'),
+              fetch('/api/time')
+            ]);
+            
+            if (uptimeResponse.ok && timeResponse.ok) {
+              const uptimeData = await uptimeResponse.json();
+              const timeData = await timeResponse.json();
+              
+              document.getElementById('uptime-display').textContent = uptimeData.uptime;
+              document.getElementById('time-display').textContent = new Date(timeData.time).toLocaleString();
+            }
+          }
+        } catch (error) {
+          console.error('Failed to load fallback data:', error);
+        }
+      }
+    }
+    
+    // Initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('🔧 DOM loaded, starting direct Angular integration...');
+      const integration = new DirectAngularIntegration();
+      integration.init();
+      window.angularIntegration = integration;
+      
+      // Show Angular integration point
+      const angularPoint = document.getElementById('angular-integration-point');
+      if (angularPoint) {
+        angularPoint.style.display = 'block';
+      }
+    });
+    
+    // Animation styles
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

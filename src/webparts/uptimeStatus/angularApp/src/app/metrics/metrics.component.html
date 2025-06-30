@@ -1,0 +1,1017 @@
+<div class="metrics-container">
+  <!-- Server Infrastructure Monitoring Section -->
+  <div class="server-monitoring-section">
+    <h2 class="section-title">
+      <mat-icon>dns</mat-icon>
+      Server Infrastructure Monitoring
+    </h2>
+    
+    <!-- Real-time Server Status -->
+    <div class="server-status-overview">
+      <mat-card class="status-summary-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>monitor_heart</mat-icon>
+            System Health Overview
+          </mat-card-title>
+          <mat-card-subtitle *ngIf="serverMetrics$ | async as metrics">
+            Last Updated: {{systemHealth.lastServerUpdate | date:'short'}}
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="status-grid">
+            <div class="status-item" *ngIf="serverMetrics$ | async as metrics">
+              <div class="status-icon">
+                <mat-icon [style.color]="getServerStatusColor(metrics.status)">
+                  {{getServerStatusIcon(metrics.status)}}
+                </mat-icon>
+              </div>
+              <div class="status-info">
+                <span class="status-label">Server Status</span>
+                <span class="status-value" [style.color]="getServerStatusColor(metrics.status)">
+                  {{metrics.status | titlecase}}
+                </span>
+              </div>
+            </div>
+            
+            <div class="status-item">
+              <div class="status-icon">
+                <mat-icon [style.color]="'#1976d2'">schedule</mat-icon>
+              </div>
+              <div class="status-info">
+                <span class="status-label">Uptime</span>
+                <span class="status-value" *ngIf="serverMetrics$ | async as metrics">
+                  {{formatUptime(metrics.uptime)}}
+                </span>
+              </div>
+            </div>
+
+            <div class="status-item">
+              <div class="status-icon">
+                <mat-icon [style.color]="getUsageColor(systemHealth.memoryUsage.percentage)">memory</mat-icon>
+              </div>
+              <div class="status-info">
+                <span class="status-label">Memory Usage</span>
+                <span class="status-value">{{systemHealth.memoryUsage.percentage}}%</span>
+              </div>
+            </div>
+
+            <div class="status-item">
+              <div class="status-icon">
+                <mat-icon [style.color]="getUsageColor(systemHealth.cpuUsage.current)">developer_board</mat-icon>
+              </div>
+              <div class="status-info">
+                <span class="status-label">CPU Usage</span>
+                <span class="status-value">{{systemHealth.cpuUsage.current}}%</span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Infrastructure Metrics Grid -->
+    <div class="infrastructure-grid">
+      <!-- Server Uptime Chart -->
+      <mat-card class="infrastructure-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>pie_chart</mat-icon>
+            Server Uptime Distribution
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container">
+            <canvas baseChart
+                    [data]="serverUptimeChartData"
+                    [options]="serverChartOptions"
+                    [type]="'doughnut'">
+            </canvas>
+          </div>
+          <div class="chart-legend">
+            <div class="legend-item">
+              <span class="legend-color uptime"></span>
+              <span>Uptime: 99.8%</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color downtime"></span>
+              <span>Downtime: 0.2%</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Memory Usage Trend -->
+      <mat-card class="infrastructure-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>memory</mat-icon>
+            Memory Usage Trend
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container">
+            <canvas baseChart
+                    [data]="memoryUsageChartData"
+                    [options]="serverChartOptions"
+                    [type]="'line'">
+            </canvas>
+          </div>
+          <div class="memory-stats">
+            <div class="stat-item">
+              <span class="stat-label">Used</span>
+              <span class="stat-value">{{formatBytes(systemHealth.memoryUsage.used * 1024 * 1024 * 1024)}}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Total</span>
+              <span class="stat-value">{{formatBytes(systemHealth.memoryUsage.total * 1024 * 1024 * 1024)}}</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- CPU Usage Chart -->
+      <mat-card class="infrastructure-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>developer_board</mat-icon>
+            CPU Usage (24h)
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container">
+            <canvas baseChart
+                    [data]="cpuUsageChartData"
+                    [options]="serverChartOptions"
+                    [type]="'line'">
+            </canvas>
+          </div>
+          <div class="cpu-stats">
+            <div class="stat-item">
+              <span class="stat-label">Current</span>
+              <span class="stat-value" [style.color]="getUsageColor(systemHealth.cpuUsage.current)">
+                {{systemHealth.cpuUsage.current}}%
+              </span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Average</span>
+              <span class="stat-value">{{systemHealth.cpuUsage.average}}%</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Peak</span>
+              <span class="stat-value">{{systemHealth.cpuUsage.peak}}%</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Network Traffic -->
+      <mat-card class="infrastructure-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>network_check</mat-icon>
+            Network Traffic (Weekly)
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container">
+            <canvas baseChart
+                    [data]="networkTrafficChartData"
+                    [options]="serverChartOptions"
+                    [type]="'bar'">
+            </canvas>
+          </div>
+          <div class="network-stats">
+            <div class="stat-item">
+              <span class="stat-label">Total Requests</span>
+              <span class="stat-value">{{systemHealth.networkStats.totalRequests.toLocaleString()}}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Active Connections</span>
+              <span class="stat-value">{{systemHealth.networkStats.activeConnections}}</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Service Status Dashboard -->
+    <div class="service-status-section">
+      <mat-card class="service-status-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>miscellaneous_services</mat-icon>
+            Service Health Status
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="services-grid">
+            <div *ngFor="let service of systemHealth.serviceStatus | keyvalue" class="service-item">
+              <div class="service-icon">
+                <mat-icon [style.color]="getServerStatusColor(service.value)">
+                  {{getServerStatusIcon(service.value)}}
+                </mat-icon>
+              </div>
+              <div class="service-info">
+                <span class="service-name">{{service.key | titlecase}}</span>
+                <mat-chip [style.background-color]="getServerStatusColor(service.value)" 
+                         [style.color]="'white'">
+                  {{service.value | titlecase}}
+                </mat-chip>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Storage and Disk Usage -->
+    <div class="storage-section">
+      <mat-card class="storage-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>storage</mat-icon>
+            Storage & Disk Usage
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="storage-info">
+            <div class="disk-usage">
+              <div class="disk-header">
+                <span class="disk-label">Primary Disk</span>
+                <span class="disk-percentage">{{systemHealth.diskUsage.percentage}}%</span>
+              </div>
+              <mat-progress-bar mode="determinate" 
+                                [value]="systemHealth.diskUsage.percentage"
+                                [color]="systemHealth.diskUsage.percentage > 75 ? 'warn' : 'primary'"
+                                class="disk-progress">
+              </mat-progress-bar>
+              <div class="disk-details">
+                <span>{{formatBytes(systemHealth.diskUsage.used * 1024 * 1024 * 1024)}} / {{formatBytes(systemHealth.diskUsage.total * 1024 * 1024 * 1024)}}</span>
+                <span>{{(systemHealth.diskUsage.total - systemHealth.diskUsage.used).toFixed(1)}} GB Free</span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- SAFe Program Overview -->
+  <div class="metrics-section">
+    <mat-card class="overview-card">
+      <mat-card-header>
+        <div mat-card-avatar class="pi-avatar">
+          <mat-icon>timeline</mat-icon>
+        </div>
+        <mat-card-title>Program Increment Overview</mat-card-title>
+        <mat-card-subtitle>{{programMetrics.pi.number}} Progress</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="pi-stats">
+          <div class="stat-item">
+            <span class="stat-value">{{programMetrics.pi.progress}}%</span>
+            <span class="stat-label">PI Progress</span>
+            <mat-progress-bar mode="determinate" [value]="programMetrics.pi.progress" class="progress-bar"></mat-progress-bar>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">{{programMetrics.pi.features.completed}}/{{programMetrics.pi.features.planned}}</span>
+            <span class="stat-label">Features</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">{{programMetrics.pi.stories.completed}}/{{programMetrics.pi.stories.planned}}</span>
+            <span class="stat-label">User Stories</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- ART Metrics -->
+    <mat-card class="art-card">
+      <mat-card-header>
+        <div mat-card-avatar class="art-avatar">
+          <mat-icon>group_work</mat-icon>
+        </div>
+        <mat-card-title>{{programMetrics.art.name}}</mat-card-title>
+        <mat-card-subtitle>Agile Release Train Metrics</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="art-stats">
+          <mat-chip-listbox class="art-chips">
+            <mat-chip-option>
+              <mat-icon>groups</mat-icon>
+              {{programMetrics.art.teams}} Teams
+            </mat-chip-option>
+            <mat-chip-option>
+              <mat-icon>speed</mat-icon>
+              {{programMetrics.art.velocity}} Velocity
+            </mat-chip-option>
+            <mat-chip-option>
+              <mat-icon>trending_up</mat-icon>
+              {{programMetrics.art.predictability}}% Predictability
+            </mat-chip-option>
+          </mat-chip-listbox>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="charts-grid">
+    <!-- Sprint Velocity Chart -->
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>trending_up</mat-icon>
+          Sprint Velocity
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-container">
+          <canvas baseChart
+                  [data]="velocityChartData"
+                  [options]="velocityChartOptions"
+                  [type]="'line'">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Burndown Chart -->
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>show_chart</mat-icon>
+          Sprint Burndown
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-container">
+          <canvas baseChart
+                  [data]="burndownChartData"
+                  [options]="burndownChartOptions"
+                  [type]="'line'">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Defect Trend Chart -->
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>bug_report</mat-icon>
+          Defect Trends
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-container">
+          <canvas baseChart
+                  [data]="defectTrendData"
+                  [options]="defectTrendOptions"
+                  [type]="'bar'">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Team Capacity -->
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>pie_chart</mat-icon>
+          Team Capacity
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-container">
+          <canvas baseChart
+                  [data]="capacityData"
+                  [options]="capacityOptions"
+                  [type]="'doughnut'">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- PI Objectives Section -->
+  <div class="objectives-section">
+    <mat-card class="objectives-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>flag</mat-icon>
+          PI Objectives
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-accordion>
+          <mat-expansion-panel *ngFor="let objective of programMetrics.objectives">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                {{objective.name}}
+              </mat-panel-title>
+              <mat-panel-description>
+                <mat-chip [style.background-color]="getConfidenceColor(objective.confidence)" 
+                         [style.color]="'white'">
+                  {{objective.confidence}} Confidence
+                </mat-chip>
+                <span class="progress-text">{{objective.progress}}%</span>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div class="objective-content">
+              <mat-progress-bar mode="determinate" [value]="objective.progress" class="objective-progress"></mat-progress-bar>
+              <p>Detailed progress and metrics for {{objective.name}} objective.</p>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Risk and Impediments -->
+  <div class="risks-section">
+    <mat-card class="risks-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>warning</mat-icon>
+          Risks & Impediments
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="risks-grid">
+          <div *ngFor="let risk of risks" class="risk-item">
+            <div class="risk-header">
+              <span class="risk-type">{{risk.type}}</span>
+              <mat-chip [style.background-color]="getSeverityColor(risk.severity)"
+                       [style.color]="'white'">
+                {{risk.severity}}
+              </mat-chip>
+            </div>
+            <div class="risk-count">
+              <mat-icon>error_outline</mat-icon>
+              <span>{{risk.count}} Active</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Value Stream Metrics -->
+  <div class="value-stream-section">
+    <mat-card class="value-stream-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>account_tree</mat-icon>
+          Value Stream Metrics
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="value-stream-grid">
+          <div class="metric-tile">
+            <div class="metric-header">
+              <mat-icon>schedule</mat-icon>
+              <span>Cycle Time</span>
+            </div>
+            <div class="metric-values">
+              <div class="metric-main">{{valueStreamMetrics.cycleTime.average}} days avg</div>
+              <div class="metric-details">
+                <span>P50: {{valueStreamMetrics.cycleTime.p50}}d</span>
+                <span>P85: {{valueStreamMetrics.cycleTime.p85}}d</span>
+                <span>P95: {{valueStreamMetrics.cycleTime.p95}}d</span>
+              </div>
+              <mat-chip [style.background-color]="valueStreamMetrics.cycleTime.trend === 'improving' ? '#4caf50' : '#ff9800'">
+                {{valueStreamMetrics.cycleTime.trend}}
+              </mat-chip>
+            </div>
+          </div>
+
+          <div class="metric-tile">
+            <div class="metric-header">
+              <mat-icon>speed</mat-icon>
+              <span>Throughput</span>
+            </div>
+            <div class="metric-values">
+              <div class="metric-main">{{valueStreamMetrics.throughput.daily}} stories/day</div>
+              <div class="metric-details">
+                <span>Weekly: {{valueStreamMetrics.throughput.weekly}}</span>
+                <span>Monthly: {{valueStreamMetrics.throughput.monthly}}</span>
+              </div>
+              <mat-chip [style.background-color]="valueStreamMetrics.throughput.trend === 'stable' ? '#2196f3' : '#4caf50'">
+                {{valueStreamMetrics.throughput.trend}}
+              </mat-chip>
+            </div>
+          </div>
+
+          <div class="metric-tile">
+            <div class="metric-header">
+              <mat-icon>work</mat-icon>
+              <span>Work in Progress</span>
+            </div>
+            <div class="metric-values">
+              <div class="metric-main">{{valueStreamMetrics.workInProgress.current}}/{{valueStreamMetrics.workInProgress.limit}}</div>
+              <div class="wip-progress">
+                <mat-progress-bar mode="determinate" 
+                                  [value]="valueStreamMetrics.workInProgress.utilization"
+                                  [color]="valueStreamMetrics.workInProgress.utilization > 85 ? 'warn' : 'primary'">
+                </mat-progress-bar>
+                <span>{{valueStreamMetrics.workInProgress.utilization}}% utilized</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Advanced Analytics Section -->
+  <div class="analytics-grid">
+    <!-- Flow Efficiency Chart -->
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>waterfall_chart</mat-icon>
+          Flow Efficiency
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-container">
+          <canvas baseChart
+                  [data]="flowEfficiencyData"
+                  [options]="flowEfficiencyOptions"
+                  [type]="'line'">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Lead Time Distribution -->
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>hourglass_bottom</mat-icon>
+          Lead Time Distribution
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-container">
+          <canvas baseChart
+                  [data]="leadTimeData"
+                  [options]="leadTimeOptions"
+                  [type]="'bar'">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Team Health Radar -->
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>health_and_safety</mat-icon>
+          Team Health
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-container">
+          <canvas baseChart
+                  [data]="teamHealthData"
+                  [options]="teamHealthOptions"
+                  [type]="'radar'">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Innovation Time Allocation -->
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>lightbulb</mat-icon>
+          Time Allocation
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-container">
+          <canvas baseChart
+                  [data]="innovationData"
+                  [options]="innovationOptions"
+                  [type]="'doughnut'">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Portfolio Metrics Section -->
+  <div class="portfolio-section">
+    <mat-card class="portfolio-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>business_center</mat-icon>
+          Portfolio Metrics
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="portfolio-grid">
+          <!-- Strategic Themes -->
+          <div class="portfolio-section-item">
+            <h3>Strategic Themes</h3>
+            <div class="themes-list">
+              <div *ngFor="let theme of portfolioMetrics.strategicThemes" class="theme-item">
+                <div class="theme-header">
+                  <span class="theme-name">{{theme.name}}</span>
+                  <span class="theme-investment">{{theme.investment}}% investment</span>
+                </div>
+                <mat-progress-bar mode="determinate" [value]="theme.progress" class="theme-progress"></mat-progress-bar>
+                <span class="theme-progress-text">{{theme.progress}}% complete</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Business Value -->
+          <div class="portfolio-section-item">
+            <h3>Business Value Delivered</h3>
+            <div class="value-metrics">
+              <div class="value-item">
+                <span class="value-number">{{portfolioMetrics.businessValue.delivered}}M</span>
+                <span class="value-label">Delivered</span>
+              </div>
+              <div class="value-item">
+                <span class="value-number">{{portfolioMetrics.businessValue.planned}}M</span>
+                <span class="value-label">Planned</span>
+              </div>
+              <div class="value-percentage">
+                <mat-progress-bar mode="determinate" 
+                                  [value]="portfolioMetrics.businessValue.percentage"
+                                  color="accent">
+                </mat-progress-bar>
+                <span>{{portfolioMetrics.businessValue.percentage}}% of planned value</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Innovation Investment -->
+          <div class="portfolio-section-item">
+            <h3>Innovation Investment</h3>
+            <div class="innovation-metrics">
+              <div class="innovation-gauge">
+                <mat-progress-spinner mode="determinate" 
+                                      [value]="(portfolioMetrics.innovation.percentage / portfolioMetrics.innovation.target) * 100"
+                                      [diameter]="120"
+                                      [strokeWidth]="8"
+                                      color="accent">
+                </mat-progress-spinner>
+                <div class="gauge-content">
+                  <span class="gauge-value">{{portfolioMetrics.innovation.percentage}}%</span>
+                  <span class="gauge-target">Target: {{portfolioMetrics.innovation.target}}%</span>
+                </div>
+              </div>
+              <mat-chip [style.background-color]="portfolioMetrics.innovation.trend === 'increasing' ? '#4caf50' : '#ff9800'">
+                {{portfolioMetrics.innovation.trend}}
+              </mat-chip>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Enhanced SAFe Metrics Dashboard -->
+  <div class="advanced-safe-section">
+    <!-- Epic Progress Tracking -->
+    <mat-card class="epic-progress-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>assignment</mat-icon>
+          Epic Progress Tracking
+        </mat-card-title>
+        <mat-card-subtitle>Overall Progress: {{calculateOverallProgress()}}%</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-container">
+          <canvas baseChart
+                  [data]="epicProgressData"
+                  [options]="epicProgressOptions"
+                  [type]="'bar'">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Feature Completion Velocity -->
+    <mat-card class="feature-velocity-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>speed</mat-icon>
+          Feature Completion Velocity
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-container">
+          <canvas baseChart
+                  [data]="featureVelocityData"
+                  [options]="featureVelocityOptions"
+                  [type]="'line'">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Dependency Management Dashboard -->
+  <div class="dependency-section">
+    <mat-card class="dependency-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>device_hub</mat-icon>
+          Dependency Management
+        </mat-card-title>
+        <mat-card-subtitle>{{getCompletionRate()}}% Dependencies Resolved</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="dependency-overview">
+          <div class="dependency-stats">
+            <div class="dep-stat-item">
+              <span class="dep-number">{{dependencyMetrics.totalDependencies}}</span>
+              <span class="dep-label">Total</span>
+            </div>
+            <div class="dep-stat-item">
+              <span class="dep-number">{{dependencyMetrics.resolvedDependencies}}</span>
+              <span class="dep-label">Resolved</span>
+            </div>
+            <div class="dep-stat-item">
+              <span class="dep-number">{{dependencyMetrics.blockedItems}}</span>
+              <span class="dep-label">Blocked</span>
+            </div>
+          </div>
+          
+          <div class="dependency-progress">
+            <mat-progress-bar mode="determinate" 
+                              [value]="getCompletionRate()"
+                              color="primary"
+                              class="dependency-progress-bar">
+            </mat-progress-bar>
+          </div>
+        </div>
+
+        <div class="dependency-types">
+          <h4>Dependency Breakdown</h4>
+          <div class="dependency-grid">
+            <div *ngFor="let dep of dependencyMetrics.dependencyTypes" class="dependency-item">
+              <div class="dep-header">
+                <span class="dep-type">{{dep.type}}</span>
+                <mat-chip [style.background-color]="getDependencyStatusColor(dep.status)"
+                         [style.color]="'white'">
+                  {{dep.status}}
+                </mat-chip>
+              </div>
+              <div class="dep-count">{{dep.count}} items</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="critical-path">
+          <h4>Critical Path</h4>
+          <mat-chip-listbox class="critical-path-chips">
+            <mat-chip-option *ngFor="let item of dependencyMetrics.criticalPath" color="warn">
+              {{item}}
+            </mat-chip-option>
+          </mat-chip-listbox>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Release Train Health Score -->
+  <div class="health-score-section">
+    <mat-card class="health-score-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>health_and_safety</mat-icon>
+          Release Train Health Score
+        </mat-card-title>
+        <mat-card-subtitle>
+          Overall Score: 
+          <span [style.color]="getHealthScoreColor(releaseTrainHealth.overallScore)">
+            {{releaseTrainHealth.overallScore}}/100
+          </span>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="health-categories">
+          <div *ngFor="let category of releaseTrainHealth.categories | keyvalue" class="health-category">
+            <div class="category-header">
+              <span class="category-name">{{category.key | titlecase}}</span>
+              <mat-icon [style.color]="getHealthCategoryTrendColor(category.key)">
+                {{getHealthCategoryTrendIcon(category.key)}}
+              </mat-icon>
+            </div>
+            <div class="category-score">
+              <mat-progress-bar mode="determinate" 
+                                [value]="category.value"
+                                [color]="category.value >= 85 ? 'primary' : category.value >= 70 ? 'accent' : 'warn'"
+                                class="health-progress">
+              </mat-progress-bar>
+              <span class="score-value" [style.color]="getHealthScoreColor(category.value)">
+                {{category.value}}%
+              </span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Customer Satisfaction & Technical Debt Section -->
+  <div class="analytics-grid-extended">
+    <!-- Customer Satisfaction -->
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>sentiment_satisfied</mat-icon>
+          Customer Satisfaction
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-container">
+          <canvas baseChart
+                  [data]="customerSatisfactionData"
+                  [options]="customerSatisfactionOptions"
+                  [type]="'line'">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Technical Debt Distribution -->
+    <mat-card class="chart-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>code</mat-icon>
+          Technical Debt
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-container">
+          <canvas baseChart
+                  [data]="technicalDebtData"
+                  [options]="technicalDebtOptions"
+                  [type]="'doughnut'">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Resource Allocation Matrix -->
+  <div class="resource-allocation-section">
+    <mat-card class="resource-allocation-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>people</mat-icon>
+          Resource Allocation Matrix
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="resource-teams">
+          <div *ngFor="let team of resourceAllocation.teams" class="team-allocation">
+            <div class="team-header">
+              <h4>{{team.name}}</h4>
+              <div class="team-info">
+                <mat-chip>{{team.members}} members</mat-chip>
+                <mat-chip [style.background-color]="getUtilizationColor(team.utilization)"
+                         [style.color]="'white'">
+                  {{team.utilization}}% utilized
+                </mat-chip>
+              </div>
+            </div>
+            
+            <div class="allocation-breakdown">
+              <div class="allocation-item" *ngFor="let allocation of team.allocation | keyvalue">
+                <span class="allocation-label">{{allocation.key | titlecase}}</span>
+                <div class="allocation-bar">
+                  <mat-progress-bar mode="determinate" 
+                                    [value]="allocation.value"
+                                    class="allocation-progress">
+                  </mat-progress-bar>
+                  <span class="allocation-value">{{allocation.value}}%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Advanced SAFe KPIs Dashboard -->
+  <div class="advanced-kpis-section">
+    <mat-card class="advanced-kpis-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>dashboard</mat-icon>
+          Advanced SAFe KPIs
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="kpis-grid">
+          <!-- Program Increment Metrics -->
+          <div class="kpi-category">
+            <h4>Program Increment</h4>
+            <div class="kpi-items">
+              <div class="kpi-item">
+                <span class="kpi-label">Planning Efficiency</span>
+                <div class="kpi-value-container">
+                  <span class="kpi-value">{{advancedSafeMetrics.programIncrement.planningEfficiency}}%</span>
+                  <mat-progress-bar mode="determinate" 
+                                    [value]="advancedSafeMetrics.programIncrement.planningEfficiency"
+                                    class="kpi-progress">
+                  </mat-progress-bar>
+                </div>
+              </div>
+              <div class="kpi-item">
+                <span class="kpi-label">Commitment Reliability</span>
+                <div class="kpi-value-container">
+                  <span class="kpi-value">{{advancedSafeMetrics.programIncrement.commitmentReliability}}%</span>
+                  <mat-progress-bar mode="determinate" 
+                                    [value]="advancedSafeMetrics.programIncrement.commitmentReliability"
+                                    class="kpi-progress">
+                  </mat-progress-bar>
+                </div>
+              </div>
+              <div class="kpi-item">
+                <span class="kpi-label">Scope Change</span>
+                <div class="kpi-value-container">
+                  <span class="kpi-value">{{advancedSafeMetrics.programIncrement.scopeChange}}%</span>
+                  <mat-progress-bar mode="determinate" 
+                                    [value]="advancedSafeMetrics.programIncrement.scopeChange"
+                                    color="warn"
+                                    class="kpi-progress">
+                  </mat-progress-bar>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ART Alignment Metrics -->
+          <div class="kpi-category">
+            <h4>ART Alignment</h4>
+            <div class="kpi-items">
+              <div class="kpi-item">
+                <span class="kpi-label">Shared Services</span>
+                <div class="kpi-value-container">
+                  <span class="kpi-value">{{advancedSafeMetrics.artAlignment.sharedServices}}%</span>
+                  <mat-progress-bar mode="determinate" 
+                                    [value]="advancedSafeMetrics.artAlignment.sharedServices"
+                                    class="kpi-progress">
+                  </mat-progress-bar>
+                </div>
+              </div>
+              <div class="kpi-item">
+                <span class="kpi-label">Architectural Runway</span>
+                <div class="kpi-value-container">
+                  <span class="kpi-value">{{advancedSafeMetrics.artAlignment.architecturalRunway}}%</span>
+                  <mat-progress-bar mode="determinate" 
+                                    [value]="advancedSafeMetrics.artAlignment.architecturalRunway"
+                                    class="kpi-progress">
+                  </mat-progress-bar>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Business Value Metrics -->
+          <div class="kpi-category">
+            <h4>Business Value</h4>
+            <div class="kpi-items">
+              <div class="kpi-item">
+                <span class="kpi-label">Value Stream Flow</span>
+                <div class="kpi-value-container">
+                  <span class="kpi-value">{{advancedSafeMetrics.businessValue.valueStreamFlow}}%</span>
+                  <mat-progress-bar mode="determinate" 
+                                    [value]="advancedSafeMetrics.businessValue.valueStreamFlow"
+                                    class="kpi-progress">
+                  </mat-progress-bar>
+                </div>
+              </div>
+              <div class="kpi-item">
+                <span class="kpi-label">Innovation Rate</span>
+                <div class="kpi-value-container">
+                  <span class="kpi-value">{{advancedSafeMetrics.businessValue.innovationRate}}%</span>
+                  <mat-progress-bar mode="determinate" 
+                                    [value]="advancedSafeMetrics.businessValue.innovationRate"
+                                    class="kpi-progress">
+                  </mat-progress-bar>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- ...existing portfolio section... -->
+</div>

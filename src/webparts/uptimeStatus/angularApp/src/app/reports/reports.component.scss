@@ -1,0 +1,368 @@
+.reports-container {
+  padding: 0;
+  max-width: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.reports-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+
+  .header-content {
+    text-align: center;
+    
+    .reports-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-size: 2.5rem;
+      font-weight: 300;
+      margin: 0 0 0.5rem 0;
+      
+      mat-icon {
+        font-size: 2.5rem;
+        width: auto;
+        height: auto;
+      }
+    }
+
+    .reports-subtitle {
+      font-size: 1.2rem;
+      margin: 0 0 1rem 0;
+      opacity: 0.9;
+    }
+
+    .last-updated {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      opacity: 0.8;
+
+      .refresh-btn {
+        color: white;
+        margin-left: 0.5rem;
+      }
+    }
+  }
+}
+
+.monitoring-section, .agile-section {
+  margin-bottom: 3rem;
+
+  .section-header {
+    margin-bottom: 2rem;
+    
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.8rem;
+      font-weight: 500;
+      color: #333;
+      margin: 0;
+      
+      mat-icon {
+        color: #1976d2;
+        font-size: 1.8rem;
+      }
+    }
+  }
+}
+
+.health-overview {
+  display: grid;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  .health-card {
+    mat-card-content {
+      padding: 1.5rem;
+    }
+
+    .health-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+
+      .health-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+
+        mat-icon {
+          font-size: 2rem;
+          width: 2rem;
+          height: 2rem;
+        }
+
+        .health-details {
+          display: flex;
+          flex-direction: column;
+
+          .health-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.25rem;
+          }
+
+          .health-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+
+  .resource-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+
+    .resource-card {
+      .usage-bar {
+        width: 100%;
+        height: 8px;
+        background-color: #e0e0e0;
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 1rem 0 0.5rem 0;
+
+        .usage-fill {
+          height: 100%;
+          border-radius: 4px;
+          transition: width 0.5s ease-in-out;
+        }
+      }
+
+      .usage-details {
+        font-size: 0.85rem;
+        color: #666;
+      }
+    }
+  }
+}
+
+.charts-grid, .safe-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  .chart-card {
+    .chart-container {
+      height: 300px;
+      position: relative;
+    }
+  }
+}
+
+.service-status-section {
+  margin-bottom: 2rem;
+
+  h3 {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 1rem;
+  }
+
+  .service-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+
+    .service-card {
+      padding: 0.5rem;
+      
+      .service-content {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        mat-icon {
+          font-size: 1.5rem;
+        }
+
+        .service-info {
+          display: flex;
+          flex-direction: column;
+
+          .service-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+          }
+
+          .service-status {
+            font-size: 0.8rem;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+}
+
+.network-stats {
+  margin-bottom: 2rem;
+
+  .network-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+
+    .network-stat {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      mat-icon {
+        color: #1976d2;
+        font-size: 2rem;
+      }
+
+      .stat-info {
+        display: flex;
+        flex-direction: column;
+
+        .stat-label {
+          font-size: 0.9rem;
+          color: #666;
+        }
+
+        .stat-value {
+          font-size: 1.2rem;
+          font-weight: 600;
+          color: #333;
+        }
+      }
+    }
+  }
+}
+
+.sprint-overview {
+  margin-bottom: 2rem;
+
+  .sprint-card {
+    .sprint-info {
+      .sprint-number {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+
+        .sprint-label {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: #1976d2;
+        }
+
+        .sprint-total {
+          font-size: 1rem;
+          color: #666;
+        }
+      }
+
+      .sprint-progress {
+        margin-bottom: 1rem;
+
+        .progress-text {
+          display: block;
+          margin-top: 0.5rem;
+          font-size: 0.9rem;
+          color: #666;
+        }
+      }
+
+      .sprint-goal {
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        line-height: 1.4;
+      }
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  gap: 1rem;
+
+  p {
+    font-size: 1.1rem;
+    color: #666;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .reports-header {
+    padding: 1.5rem;
+
+    .header-content {
+      .reports-title {
+        font-size: 2rem;
+      }
+
+      .reports-subtitle {
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .charts-grid, .safe-charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .health-overview {
+    .resource-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .service-status-section {
+    .service-grid {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+  }
+
+  .network-stats {
+    .network-grid {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .charts-grid, .safe-charts-grid {
+    .chart-card {
+      .chart-container {
+        height: 250px;
+      }
+    }
+  }
+
+  .health-overview {
+    .health-card {
+      .health-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}

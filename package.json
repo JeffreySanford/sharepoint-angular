@@ -13,12 +13,14 @@
     "clean": "npx gulp clean",
     "test": "npx gulp test",
     "build:angular": "cd src/webparts/uptimeStatus/angularApp && npm run build",
+    "build:angular:update": "npm run build:angular && node scripts/update-angular-assets.js",
     "start:api": "ts-node server/src/main.ts",
     "start:spfx:legacy": "npx gulp serve --nobrowser",
     "start:spfx:dev": "webpack serve --config webpack.dev.js",
     "build:spfx:dev": "webpack --config webpack.dev.js",
     "start:dev": "concurrently \"npm run start:api\" \"npm run start:spfx:dev\"",
-    "start": "concurrently \"npm run start:api\" \"npm run start:spfx:dev\""
+    "start": "concurrently \"npm run start:api\" \"npm run start:spfx:dev\"",
+    "update-assets": "node scripts/update-angular-assets.js"
   },
   "dependencies": {
     "@azure/msal-angular": "^4.0.12",
@@ -46,6 +48,7 @@
     "gulp": "~3.9.1",
     "gulp-cli": "^2.3.0",
     "html-webpack-plugin": "^5.5.0",
+    "path-browserify": "^1.0.1",
     "sass": "^1.69.0",
     "sass-loader": "^13.3.0",
     "style-loader": "^3.3.0",

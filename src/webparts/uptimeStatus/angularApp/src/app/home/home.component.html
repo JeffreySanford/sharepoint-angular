@@ -1,0 +1,194 @@
+<div class="home-container">
+  <!-- Welcome Header -->
+  <div class="welcome-section">
+    <mat-card class="welcome-card">
+      <mat-card-content>
+        <div class="welcome-content">
+          <div class="welcome-text">
+            <h1 class="welcome-title">Good Morning, Project Manager! 👋</h1>
+            <p class="welcome-subtitle">Here's your Agile SAFe dashboard overview for today</p>
+          </div>
+          <div class="current-time">
+            <mat-icon>schedule</mat-icon>
+            <span>{{getCurrentDate()}} - {{getCurrentTime()}}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions-section">
+    <h2 class="section-title">Quick Actions</h2>
+    <div class="quick-actions-grid">
+      <mat-card *ngFor="let action of quickActions" 
+                class="action-card" 
+                (click)="onQuickAction(action)"
+                [style.border-left]="'4px solid ' + action.color">
+        <mat-card-content>
+          <div class="action-content">
+            <mat-icon [style.color]="action.color">{{action.icon}}</mat-icon>
+            <span>{{action.title}}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Dashboard Overview -->
+  <div class="dashboard-overview">
+    <div class="overview-grid">
+      <!-- Current Sprint Status -->
+      <mat-card class="overview-card sprint-card">
+        <mat-card-header>
+          <div mat-card-avatar class="sprint-avatar">
+            <mat-icon>sprint</mat-icon>
+          </div>
+          <mat-card-title>{{dashboardSummary.currentSprint.number}}</mat-card-title>
+          <mat-card-subtitle>Current Sprint Status</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="sprint-metrics">
+            <div class="metric">
+              <span class="metric-value">{{dashboardSummary.currentSprint.daysRemaining}}</span>
+              <span class="metric-label">Days Remaining</span>
+            </div>
+            <div class="metric">
+              <span class="metric-value">{{dashboardSummary.currentSprint.progress}}%</span>
+              <span class="metric-label">Progress</span>
+            </div>
+          </div>
+          <mat-progress-bar 
+            mode="determinate" 
+            [value]="dashboardSummary.currentSprint.progress"
+            class="sprint-progress">
+          </mat-progress-bar>
+          <div class="burndown-status">
+            <mat-chip [style.background-color]="getBurndownStatusColor(dashboardSummary.currentSprint.burndownStatus)"
+                     [style.color]="'white'">
+              {{dashboardSummary.currentSprint.burndownStatus}}
+            </mat-chip>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Team Health -->
+      <mat-card class="overview-card health-card">
+        <mat-card-header>
+          <div mat-card-avatar class="health-avatar">
+            <mat-icon>favorite</mat-icon>
+          </div>
+          <mat-card-title>Team Health</mat-card-title>
+          <mat-card-subtitle>Key Performance Indicators</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="health-metrics">
+            <div class="health-item">
+              <div class="health-label">Velocity</div>
+              <div class="health-value" [style.color]="getHealthColor('velocity', dashboardSummary.teamHealth.velocity)">
+                {{dashboardSummary.teamHealth.velocity}}
+              </div>
+            </div>
+            <div class="health-item">
+              <div class="health-label">Capacity</div>
+              <div class="health-value" [style.color]="getHealthColor('capacity', dashboardSummary.teamHealth.capacity)">
+                {{dashboardSummary.teamHealth.capacity}}%
+              </div>
+            </div>
+            <div class="health-item">
+              <div class="health-label">Satisfaction</div>
+              <div class="health-value" [style.color]="getHealthColor('satisfaction', dashboardSummary.teamHealth.satisfaction)">
+                {{dashboardSummary.teamHealth.satisfaction}}/5
+              </div>
+            </div>
+            <div class="health-item">
+              <div class="health-label">Impediments</div>
+              <div class="health-value" [style.color]="dashboardSummary.teamHealth.impediments > 3 ? '#f44336' : '#4caf50'">
+                {{dashboardSummary.teamHealth.impediments}}
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Deliverables Summary -->
+      <mat-card class="overview-card deliverables-card">
+        <mat-card-header>
+          <div mat-card-avatar class="deliverables-avatar">
+            <mat-icon>assignment</mat-icon>
+          </div>
+          <mat-card-title>Deliverables</mat-card-title>
+          <mat-card-subtitle>Work Item Status</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="deliverables-grid">
+            <div class="deliverable-item completed">
+              <mat-icon>check_circle</mat-icon>
+              <span class="count">{{dashboardSummary.deliverables.completed}}</span>
+              <span class="label">Completed</span>
+            </div>
+            <div class="deliverable-item in-progress">
+              <mat-icon>schedule</mat-icon>
+              <span class="count">{{dashboardSummary.deliverables.inProgress}}</span>
+              <span class="label">In Progress</span>
+            </div>
+            <div class="deliverable-item planned">
+              <mat-icon>playlist_add</mat-icon>
+              <span class="count">{{dashboardSummary.deliverables.planned}}</span>
+              <span class="label">Planned</span>
+            </div>
+            <div class="deliverable-item blocked">
+              <mat-icon>block</mat-icon>
+              <span class="count">{{dashboardSummary.deliverables.blocked}}</span>
+              <span class="label">Blocked</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Recent Activities and Upcoming Events -->
+  <div class="activities-events-section">
+    <div class="activities-events-grid">
+      <!-- Recent Activities -->
+      <mat-card class="activities-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>history</mat-icon>
+            Recent Activities
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-list>
+            <mat-list-item *ngFor="let activity of dashboardSummary.recentActivities">
+              <mat-icon matListItemIcon [style.color]="activity.color">{{activity.icon}}</mat-icon>
+              <div matListItemTitle>{{activity.title}}</div>
+              <div matListItemLine>{{activity.time}}</div>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Upcoming Events -->
+      <mat-card class="events-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>event</mat-icon>
+            Upcoming Events
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-list>
+            <mat-list-item *ngFor="let event of dashboardSummary.upcomingEvents">
+              <mat-icon matListItemIcon>event</mat-icon>
+              <div matListItemTitle>{{event.title}}</div>
+              <div matListItemLine>{{event.date}} • {{event.attendees}} attendees</div>
+              <mat-chip class="event-chip">{{event.type}}</mat-chip>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

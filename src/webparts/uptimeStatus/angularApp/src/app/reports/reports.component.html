@@ -1,0 +1,386 @@
+<div class="reports-container" *ngIf="reportsData">
+  <!-- Header -->
+  <div class="reports-header">
+    <div class="header-content">
+      <h1 class="reports-title">
+        <mat-icon>analytics</mat-icon>
+        Comprehensive Analytics Dashboard
+      </h1>
+      <p class="reports-subtitle">Real-time Infrastructure & SAFe Agile Metrics</p>
+      <div class="last-updated">
+        <mat-icon>schedule</mat-icon>
+        Last updated: {{ lastUpdated | date:'medium' }}
+        <button mat-icon-button (click)="refreshData()" class="refresh-btn">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Server Infrastructure Monitoring Section -->
+  <div class="monitoring-section" *ngIf="systemHealth">
+    <div class="section-header">
+      <h2>
+        <mat-icon>dns</mat-icon>
+        Server Infrastructure Monitoring
+      </h2>
+    </div>
+
+    <!-- System Health Overview -->
+    <div class="health-overview">
+      <mat-card class="health-card">
+        <mat-card-header>
+          <mat-card-title>System Health</mat-card-title>
+          <mat-card-subtitle>Overall server status</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="health-grid">
+            <div class="health-item">
+              <mat-icon [style.color]="getStatusColor(systemHealth.serverStatus)">
+                {{ getStatusIcon(systemHealth.serverStatus) }}
+              </mat-icon>
+              <div class="health-details">
+                <span class="health-label">Server Status</span>
+                <span class="health-value" [style.color]="getStatusColor(systemHealth.serverStatus)">
+                  {{ systemHealth.serverStatus | titlecase }}
+                </span>
+              </div>
+            </div>
+            <div class="health-item">
+              <mat-icon class="uptime-icon">schedule</mat-icon>
+              <div class="health-details">
+                <span class="health-label">Uptime</span>
+                <span class="health-value">{{ formatUptime(systemHealth.serverUptime) }}</span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Resource Usage Cards -->
+      <div class="resource-cards">
+        <mat-card class="resource-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar [style.color]="getUsageColor(systemHealth.memoryUsage.percentage)">
+              memory
+            </mat-icon>
+            <mat-card-title>Memory Usage</mat-card-title>
+            <mat-card-subtitle>{{ systemHealth.memoryUsage.percentage }}%</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="usage-bar">
+              <div class="usage-fill" 
+                   [style.width.%]="systemHealth.memoryUsage.percentage"
+                   [style.background-color]="getUsageColor(systemHealth.memoryUsage.percentage)">
+              </div>
+            </div>
+            <div class="usage-details">
+              <span>{{ formatBytes(systemHealth.memoryUsage.used) }} / {{ formatBytes(systemHealth.memoryUsage.total) }}</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="resource-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar [style.color]="getUsageColor(systemHealth.cpuUsage.current)">
+              computer
+            </mat-icon>
+            <mat-card-title>CPU Usage</mat-card-title>
+            <mat-card-subtitle>{{ systemHealth.cpuUsage.current }}%</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="usage-bar">
+              <div class="usage-fill" 
+                   [style.width.%]="systemHealth.cpuUsage.current"
+                   [style.background-color]="getUsageColor(systemHealth.cpuUsage.current)">
+              </div>
+            </div>
+            <div class="usage-details">
+              <span>Avg: {{ systemHealth.cpuUsage.average }}% | Peak: {{ systemHealth.cpuUsage.peak }}%</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="resource-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar [style.color]="getUsageColor(systemHealth.diskUsage.percentage)">
+              storage
+            </mat-icon>
+            <mat-card-title>Disk Usage</mat-card-title>
+            <mat-card-subtitle>{{ systemHealth.diskUsage.percentage }}%</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="usage-bar">
+              <div class="usage-fill" 
+                   [style.width.%]="systemHealth.diskUsage.percentage"
+                   [style.background-color]="getUsageColor(systemHealth.diskUsage.percentage)">
+              </div>
+            </div>
+            <div class="usage-details">
+              <span>{{ formatBytes(systemHealth.diskUsage.used) }} / {{ formatBytes(systemHealth.diskUsage.total) }}</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-grid" *ngIf="reportsData.chartConfigurations">
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Server Uptime</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container">
+            <canvas baseChart
+                    [data]="reportsData.chartConfigurations.serverUptime"
+                    [options]="doughnutChartOptions"
+                    type="doughnut">
+            </canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Memory Usage Trend</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container">
+            <canvas baseChart
+                    [data]="reportsData.chartConfigurations.memoryUsage"
+                    [options]="lineChartOptions"
+                    type="line">
+            </canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>CPU Usage (24h)</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container">
+            <canvas baseChart
+                    [data]="reportsData.chartConfigurations.cpuUsage"
+                    [options]="lineChartOptions"
+                    type="line">
+            </canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Network Traffic</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container">
+            <canvas baseChart
+                    [data]="reportsData.chartConfigurations.networkTraffic"
+                    [options]="barChartOptions"
+                    type="bar">
+            </canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Service Status Grid -->
+    <div class="service-status-section">
+      <h3>Service Health Status</h3>
+      <div class="service-grid">
+        <div class="service-item" *ngFor="let service of systemHealth.serviceStatus | keyvalue">
+          <mat-card class="service-card">
+            <div class="service-content">
+              <mat-icon [style.color]="getStatusColor(service.value)">
+                {{ getStatusIcon(service.value) }}
+              </mat-icon>
+              <div class="service-info">
+                <span class="service-name">{{ service.key | titlecase }}</span>
+                <span class="service-status" [style.color]="getStatusColor(service.value)">
+                  {{ service.value | titlecase }}
+                </span>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+
+    <!-- Network Statistics -->
+    <div class="network-stats">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Network Statistics</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="network-grid">
+            <div class="network-stat">
+              <mat-icon>cloud_download</mat-icon>
+              <div class="stat-info">
+                <span class="stat-label">Incoming</span>
+                <span class="stat-value">{{ systemHealth.networkStats.incoming }} MB/s</span>
+              </div>
+            </div>
+            <div class="network-stat">
+              <mat-icon>cloud_upload</mat-icon>
+              <div class="stat-info">
+                <span class="stat-label">Outgoing</span>
+                <span class="stat-value">{{ systemHealth.networkStats.outgoing }} MB/s</span>
+              </div>
+            </div>
+            <div class="network-stat">
+              <mat-icon>insert_chart</mat-icon>
+              <div class="stat-info">
+                <span class="stat-label">Total Requests</span>
+                <span class="stat-value">{{ systemHealth.networkStats.totalRequests | number }}</span>
+              </div>
+            </div>
+            <div class="network-stat">
+              <mat-icon>link</mat-icon>
+              <div class="stat-info">
+                <span class="stat-label">Active Connections</span>
+                <span class="stat-value">{{ systemHealth.networkStats.activeConnections }}</span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- SAFe Agile Metrics Section -->
+  <div class="agile-section" *ngIf="safeMetrics">
+    <div class="section-header">
+      <h2>
+        <mat-icon>trending_up</mat-icon>
+        SAFe Agile Framework Metrics
+      </h2>
+    </div>
+
+    <!-- Sprint Overview -->
+    <div class="sprint-overview">
+      <mat-card class="sprint-card">
+        <mat-card-header>
+          <mat-card-title>Current Sprint Status</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="sprint-info">
+            <div class="sprint-number">
+              <span class="sprint-label">Sprint {{ safeMetrics.sprintData.currentSprint }}</span>
+              <span class="sprint-total">of {{ safeMetrics.sprintData.totalSprints }}</span>
+            </div>
+            <div class="sprint-progress">
+              <mat-progress-bar mode="determinate" [value]="safeMetrics.sprintData.sprintProgress"></mat-progress-bar>
+              <span class="progress-text">{{ safeMetrics.sprintData.sprintProgress }}% Complete</span>
+            </div>
+            <div class="sprint-goal">
+              <strong>Goal:</strong> {{ safeMetrics.sprintData.sprintGoal }}
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- SAFe Charts Grid -->
+    <div class="safe-charts-grid" *ngIf="reportsData.chartConfigurations">
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Velocity Trend</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container">
+            <canvas baseChart
+                    [data]="reportsData.chartConfigurations.velocity"
+                    [options]="lineChartOptions"
+                    type="line">
+            </canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Sprint Burndown</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container">
+            <canvas baseChart
+                    [data]="reportsData.chartConfigurations.burndown"
+                    [options]="lineChartOptions"
+                    type="line">
+            </canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Defect Tracking</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container">
+            <canvas baseChart
+                    [data]="reportsData.chartConfigurations.defects"
+                    [options]="barChartOptions"
+                    type="bar">
+            </canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Test Metrics</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container">
+            <canvas baseChart
+                    [data]="reportsData.chartConfigurations.testing"
+                    [options]="barChartOptions"
+                    type="bar">
+            </canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Cumulative Flow</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container">
+            <canvas baseChart
+                    [data]="reportsData.chartConfigurations.cumulativeFlow"
+                    [options]="barChartOptions"
+                    type="bar">
+            </canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="chart-card">
+        <mat-card-header>
+          <mat-card-title>Lead & Cycle Time</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chart-container">
+            <canvas baseChart
+                    [data]="reportsData.chartConfigurations.leadTime"
+                    [options]="lineChartOptions"
+                    type="line">
+            </canvas>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div class="loading-container" *ngIf="!reportsData">
+  <mat-spinner></mat-spinner>
+  <p>Loading comprehensive reports dashboard...</p>
+</div>
