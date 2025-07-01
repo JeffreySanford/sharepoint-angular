@@ -1,0 +1,44 @@
+{
+  "/api/*": {
+    "target": "http://localhost:3000",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/main.js": {
+    "target": "http://localhost:4200",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/runtime.js": {
+    "target": "http://localhost:4200",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/polyfills.js": {
+    "target": "http://localhost:4200",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/vendor.js": {
+    "target": "http://localhost:4200",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/styles.css": {
+    "target": "http://localhost:4200",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/styles.js": {
+    "target": "http://localhost:4200",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

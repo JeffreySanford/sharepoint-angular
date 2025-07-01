@@ -1,0 +1,241 @@
+<div class="list-dialog">
+  <div mat-dialog-title class="dialog-header">
+    <mat-icon>{{ isEdit ? 'edit' : 'add' }}</mat-icon>
+    <span>{{ isEdit ? 'Edit List' : 'Create New List' }}</span>
+  </div>
+
+  <div mat-dialog-content class="dialog-content">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      
+      <!-- Basic Information -->
+      <div class="form-section">
+        <h3 class="section-title">Basic Information</h3>
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Title</mat-label>
+          <input matInput 
+                 formControlName="title" 
+                 placeholder="Enter list title"
+                 maxlength="200">
+          <mat-hint align="end">{{ form.get('title')?.value?.length || 0 }}/200</mat-hint>
+          <mat-error *ngIf="form.get('title')?.hasError('required')">
+            Title is required
+          </mat-error>
+          <mat-error *ngIf="form.get('title')?.hasError('maxlength')">
+            Title cannot exceed 200 characters
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput 
+                    formControlName="description"
+                    placeholder="Describe the purpose and goals of this list"
+                    rows="3"
+                    maxlength="500"></textarea>
+          <mat-hint align="end">{{ form.get('description')?.value?.length || 0 }}/500</mat-hint>
+          <mat-error *ngIf="form.get('description')?.hasError('required')">
+            Description is required
+          </mat-error>
+          <mat-error *ngIf="form.get('description')?.hasError('maxlength')">
+            Description cannot exceed 500 characters
+          </mat-error>
+        </mat-form-field>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Type</mat-label>
+            <mat-select formControlName="type" (selectionChange)="onTypeChange($event.value)">
+              <mat-option *ngFor="let type of listTypes" [value]="type">
+                <div class="type-option">
+                  <mat-icon>{{ 
+                    type === ListType.SPRINT ? 'sprint' :
+                    type === ListType.EPIC ? 'assignment' :
+                    type === ListType.BACKLOG ? 'list' :
+                    type === ListType.BUG_TRACKING ? 'bug_report' :
+                    type === ListType.FEATURE_REQUEST ? 'lightbulb' :
+                    type === ListType.TEAM_TASKS ? 'group' :
+                    'folder'
+                  }}</mat-icon>
+                  <span>{{ type }}</span>
+                </div>
+              </mat-option>
+            </mat-select>
+            <mat-hint>{{ getTypeDescription(form.get('type')?.value) }}</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status">
+              <mat-option *ngFor="let status of listStatuses" [value]="status">
+                <mat-chip [color]="
+                  status === ListStatus.ACTIVE ? 'primary' :
+                  status === ListStatus.COMPLETED ? 'accent' :
+                  status === ListStatus.ON_HOLD ? 'warn' : ''
+                " selected>
+                  {{ status }}
+                </mat-chip>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Priority</mat-label>
+            <mat-select formControlName="priority">
+              <mat-option *ngFor="let priority of priorities" [value]="priority">
+                <div class="priority-option">
+                  <mat-icon [style.color]="
+                    priority === Priority.CRITICAL ? '#d32f2f' :
+                    priority === Priority.HIGH ? '#f57c00' :
+                    priority === Priority.MEDIUM ? '#1976d2' :
+                    priority === Priority.LOW ? '#388e3c' : '#757575'
+                  ">
+                    {{ 
+                      priority === Priority.CRITICAL ? 'priority_high' :
+                      priority === Priority.HIGH ? 'expand_less' :
+                      priority === Priority.MEDIUM ? 'remove' :
+                      priority === Priority.LOW ? 'expand_more' : 'remove'
+                    }}
+                  </mat-icon>
+                  <span>{{ priority }}</span>
+                </div>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Due Date</mat-label>
+            <input matInput 
+                   type="date" 
+                   formControlName="dueDate">
+            <mat-hint>Optional completion target date</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Tags</mat-label>
+            <input matInput 
+                   formControlName="tags"
+                   placeholder="tag1, tag2, tag3">
+            <mat-hint>Comma-separated tags for organization</mat-hint>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Advanced Settings -->
+      <div class="form-section" formGroupName="metadata">
+        <h3 class="section-title">
+          <mat-icon>settings</mat-icon>
+          Advanced Settings
+        </h3>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Color</mat-label>
+            <input matInput 
+                   type="color" 
+                   formControlName="color"
+                   class="color-input">
+            <mat-hint>Visual identifier color</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Icon</mat-label>
+            <input matInput 
+                   formControlName="icon"
+                   placeholder="Material icon name">
+            <mat-hint>Material Icons name</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Estimated Hours</mat-label>
+            <input matInput 
+                   type="number" 
+                   formControlName="estimatedHours"
+                   min="0"
+                   step="0.5">
+            <mat-hint>Total estimated effort</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <!-- Sprint-specific fields -->
+        <div class="form-row" *ngIf="form.get('type')?.value === 'SPRINT'">
+          <mat-form-field appearance="outline">
+            <mat-label>Sprint Number</mat-label>
+            <input matInput 
+                   type="number" 
+                   formControlName="sprintNumber"
+                   min="1">
+            <mat-hint>Sprint sequence number</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Team ID</mat-label>
+            <input matInput 
+                   formControlName="teamId"
+                   placeholder="team-id">
+            <mat-hint>Associated team identifier</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <!-- Epic-specific fields -->
+        <div class="form-row" *ngIf="form.get('type')?.value === 'EPIC'">
+          <mat-form-field appearance="outline">
+            <mat-label>Project ID</mat-label>
+            <input matInput 
+                   formControlName="projectId"
+                   placeholder="project-id">
+            <mat-hint>Associated project identifier</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <!-- Backlog-specific fields -->
+        <div class="form-row" *ngIf="form.get('type')?.value === 'BACKLOG'">
+          <mat-form-field appearance="outline">
+            <mat-label>Epic ID</mat-label>
+            <input matInput 
+                   formControlName="epicId"
+                   placeholder="epic-id">
+            <mat-hint>Parent epic identifier</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <!-- Template settings -->
+        <div class="template-section">
+          <mat-checkbox formControlName="isTemplate">
+            Use as template
+          </mat-checkbox>
+          
+          <mat-form-field appearance="outline" 
+                          *ngIf="form.get('metadata.isTemplate')?.value"
+                          class="template-category">
+            <mat-label>Template Category</mat-label>
+            <mat-select formControlName="templateCategory">
+              <mat-option value="agile">Agile/Scrum</mat-option>
+              <mat-option value="kanban">Kanban</mat-option>
+              <mat-option value="waterfall">Waterfall</mat-option>
+              <mat-option value="support">Support</mat-option>
+              <mat-option value="research">Research</mat-option>
+              <mat-option value="custom">Custom</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+  <div mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="onCancel()">
+      Cancel
+    </button>
+    <button mat-raised-button 
+            color="primary" 
+            (click)="onSubmit()"
+            [disabled]="form.invalid">
+      <mat-icon>{{ isEdit ? 'save' : 'add' }}</mat-icon>
+      {{ isEdit ? 'Update' : 'Create' }}
+    </button>
+  </div>
+</div>

@@ -1,12 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
-
+export class HomeComponent implements OnInit, OnDestroy {
   // Dashboard summary data
   dashboardSummary = {
     currentSprint: {
@@ -86,10 +85,30 @@ export class HomeComponent implements OnInit {
     { title: 'Generate Report', icon: 'assessment', color: '#ff9800' }
   ];
 
+  currentDate: string = '';
+  currentTime: string = '';
+  private timeIntervalId: any;
+
   constructor() { }
 
   ngOnInit(): void {
     // Initialize component
+    this.updateCurrentDateTime();
+    this.timeIntervalId = setInterval(() => {
+      this.updateCurrentDateTime();
+    }, 1000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.timeIntervalId) {
+      clearInterval(this.timeIntervalId);
+    }
+  }
+
+  private updateCurrentDateTime(): void {
+    const now = new Date();
+    this.currentDate = now.toLocaleDateString();
+    this.currentTime = now.toLocaleTimeString();
   }
 
   getBurndownStatusColor(status: string): string {
@@ -121,13 +140,5 @@ export class HomeComponent implements OnInit {
   onQuickAction(action: any): void {
     console.log('Quick action clicked:', action);
     // Handle navigation or action based on action.type
-  }
-
-  getCurrentDate(): string {
-    return new Date().toLocaleDateString();
-  }
-
-  getCurrentTime(): string {
-    return new Date().toLocaleTimeString();
   }
 }

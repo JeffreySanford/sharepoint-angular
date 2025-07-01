@@ -1,0 +1,306 @@
+<div class="list-item-dialog">
+  <div mat-dialog-title class="dialog-header">
+    <mat-icon>{{ isEdit ? 'edit' : 'add_task' }}</mat-icon>
+    <span>{{ isEdit ? 'Edit Item' : 'Create New Item' }}</span>
+  </div>
+
+  <div mat-dialog-content class="dialog-content">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      
+      <!-- Quick Presets -->
+      <div class="presets-section" *ngIf="!isEdit">
+        <h4>Quick Presets:</h4>
+        <div class="preset-buttons">
+          <button type="button" 
+                  mat-stroked-button 
+                  (click)="applyStoryPreset()">
+            <mat-icon>library_books</mat-icon>
+            User Story
+          </button>
+          <button type="button" 
+                  mat-stroked-button 
+                  (click)="applyBugPreset()">
+            <mat-icon>bug_report</mat-icon>
+            Bug Report
+          </button>
+          <button type="button" 
+                  mat-stroked-button 
+                  (click)="applyTaskPreset()">
+            <mat-icon>task_alt</mat-icon>
+            Task
+          </button>
+        </div>
+      </div>
+
+      <!-- Basic Information -->
+      <div class="form-section">
+        <h3 class="section-title">Basic Information</h3>
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Title</mat-label>
+          <input matInput 
+                 formControlName="title" 
+                 placeholder="Enter item title"
+                 maxlength="200">
+          <mat-hint align="end">{{ form.get('title')?.value?.length || 0 }}/200</mat-hint>
+          <mat-error *ngIf="form.get('title')?.hasError('required')">
+            Title is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput 
+                    formControlName="description"
+                    placeholder="Detailed description of the work to be done"
+                    rows="3"
+                    maxlength="1000"></textarea>
+          <mat-hint align="end">{{ form.get('description')?.value?.length || 0 }}/1000</mat-hint>
+        </mat-form-field>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status">
+              <mat-option *ngFor="let status of statuses" [value]="status">
+                <div class="status-option">
+                  <mat-chip [color]="
+                    status === ListItemStatus.TODO ? '' :
+                    status === ListItemStatus.IN_PROGRESS ? 'primary' :
+                    status === ListItemStatus.IN_REVIEW ? 'accent' :
+                    'primary'
+                  ">
+                    {{ status }}
+                  </mat-chip>
+                </div>
+              </mat-option>
+            </mat-select>
+            <mat-hint>{{ getStatusDescription(form.get('status')?.value) }}</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Priority</mat-label>
+            <mat-select formControlName="priority">
+              <mat-option *ngFor="let priority of priorities" [value]="priority">
+                <div class="priority-option">
+                  <mat-icon [style.color]="
+                    priority === Priority.CRITICAL ? '#d32f2f' :
+                    priority === Priority.HIGH ? '#f57c00' :
+                    priority === Priority.MEDIUM ? '#1976d2' :
+                    priority === Priority.LOW ? '#388e3c' : '#757575'
+                  ">
+                    {{ 
+                      priority === Priority.CRITICAL ? 'priority_high' :
+                      priority === Priority.HIGH ? 'expand_less' :
+                      priority === Priority.MEDIUM ? 'remove' :
+                      priority === Priority.LOW ? 'expand_more' : 'remove'
+                    }}
+                  </mat-icon>
+                  <span>{{ priority }}</span>
+                </div>
+              </mat-option>
+            </mat-select>
+            <mat-hint>{{ getPriorityDescription(form.get('priority')?.value) }}</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Assignee</mat-label>
+            <input matInput 
+                   formControlName="assignee"
+                   placeholder="Username or email">
+            <mat-hint>Person responsible for this item</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Due Date</mat-label>
+            <input matInput 
+                   type="date" 
+                   formControlName="dueDate">
+            <mat-hint>Target completion date</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tags</mat-label>
+          <input matInput 
+                 formControlName="tags"
+                 placeholder="frontend, api, urgent">
+          <mat-hint>Comma-separated tags for categorization</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <!-- Effort & Planning -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <mat-icon>schedule</mat-icon>
+          Effort & Planning
+        </h3>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Story Points</mat-label>
+            <input matInput 
+                   type="number" 
+                   formControlName="storyPoints"
+                   min="0"
+                   max="100"
+                   step="0.5">
+            <mat-hint>Relative sizing (1=XS, 2=S, 3=M, 5=L, 8=XL)</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Estimated Hours</mat-label>
+            <input matInput 
+                   type="number" 
+                   formControlName="estimatedHours"
+                   min="0"
+                   step="0.5">
+            <mat-hint>Time estimate in hours</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" *ngIf="isEdit">
+            <mat-label>Actual Hours</mat-label>
+            <input matInput 
+                   type="number" 
+                   formControlName="actualHours"
+                   min="0"
+                   step="0.25">
+            <mat-hint>Time actually spent</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Acceptance Criteria</mat-label>
+          <textarea matInput 
+                    formControlName="acceptanceCriteria"
+                    placeholder="Define what 'done' means for this item..."
+                    rows="4"></textarea>
+          <mat-hint>Clear criteria for considering this item complete</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <!-- Advanced Metadata -->
+      <div class="form-section" formGroupName="metadata">
+        <h3 class="section-title">
+          <mat-icon>settings</mat-icon>
+          Advanced Metadata
+        </h3>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Epic</mat-label>
+            <input matInput 
+                   formControlName="epic"
+                   placeholder="Epic ID or name">
+            <mat-hint>Parent epic this item belongs to</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Sprint</mat-label>
+            <input matInput 
+                   formControlName="sprint"
+                   placeholder="Sprint name or number">
+            <mat-hint>Sprint this item is planned for</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Component</mat-label>
+            <input matInput 
+                   formControlName="component"
+                   placeholder="UI, API, Database, etc.">
+            <mat-hint>System component affected</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Business Value</mat-label>
+            <mat-select formControlName="businessValue">
+              <mat-option value="1">1 - Minimal</mat-option>
+              <mat-option value="2">2 - Low</mat-option>
+              <mat-option value="3">3 - Minor</mat-option>
+              <mat-option value="4">4 - Moderate</mat-option>
+              <mat-option value="5">5 - Medium</mat-option>
+              <mat-option value="6">6 - Good</mat-option>
+              <mat-option value="7">7 - High</mat-option>
+              <mat-option value="8">8 - Very High</mat-option>
+              <mat-option value="9">9 - Critical</mat-option>
+              <mat-option value="10">10 - Essential</mat-option>
+            </mat-select>
+            <mat-hint>Business value rating (1-10)</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Risk Level</mat-label>
+            <mat-select formControlName="riskLevel">
+              <mat-option value="LOW">
+                <div class="risk-option">
+                  <mat-icon style="color: #4caf50;">check_circle</mat-icon>
+                  <span>Low Risk</span>
+                </div>
+              </mat-option>
+              <mat-option value="MEDIUM">
+                <div class="risk-option">
+                  <mat-icon style="color: #ff9800;">warning</mat-icon>
+                  <span>Medium Risk</span>
+                </div>
+              </mat-option>
+              <mat-option value="HIGH">
+                <div class="risk-option">
+                  <mat-icon style="color: #f44336;">error</mat-icon>
+                  <span>High Risk</span>
+                </div>
+              </mat-option>
+            </mat-select>
+            <mat-hint>Implementation risk level</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Labels</mat-label>
+          <input matInput 
+                 formControlName="labels"
+                 placeholder="enhancement, refactor, technical-debt">
+          <mat-hint>Comma-separated labels for detailed categorization</mat-hint>
+        </mat-form-field>
+
+        <!-- Dependencies -->
+        <div class="dependencies-section">
+          <h4 class="subsection-title">Dependencies</h4>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Depends On</mat-label>
+            <input matInput 
+                   formControlName="dependsOn"
+                   placeholder="item-123, item-456">
+            <mat-hint>Items that must be completed before this one</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Blocked By</mat-label>
+            <input matInput 
+                   formControlName="blockedBy"
+                   placeholder="external-dependency, approval-needed">
+            <mat-hint>External factors preventing progress</mat-hint>
+          </mat-form-field>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+  <div mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="onCancel()">
+      Cancel
+    </button>
+    <button mat-raised-button 
+            color="primary" 
+            (click)="onSubmit()"
+            [disabled]="form.invalid">
+      <mat-icon>{{ isEdit ? 'save' : 'add_task' }}</mat-icon>
+      {{ isEdit ? 'Update Item' : 'Create Item' }}
+    </button>
+  </div>
+</div>

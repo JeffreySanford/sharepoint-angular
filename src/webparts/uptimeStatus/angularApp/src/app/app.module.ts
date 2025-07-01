@@ -4,6 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 // Angular Material imports
 import { MatCardModule } from '@angular/material/card';
@@ -40,6 +41,9 @@ import { HomeComponent } from './home/home.component';
 import { ReportsComponent } from './reports/reports.component';
 import { UptimeService } from './uptime.service';
 
+// Lists Module
+import { ListsModule } from './lists/lists.module';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -55,7 +59,10 @@ import { UptimeService } from './uptime.service';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
+    RouterModule.forRoot([]),
     NgChartsModule,
+    
+    // Material Modules
     MatCardModule,
     MatProgressSpinnerModule,
     MatButtonModule,
@@ -78,7 +85,10 @@ import { UptimeService } from './uptime.service';
     MatNativeDateModule,
     MatTableModule,
     MatSortModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    
+    // Feature Modules
+    ListsModule
   ],
   providers: [
     UptimeService

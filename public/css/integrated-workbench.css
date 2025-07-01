@@ -1,0 +1,125 @@
+/* Integrated Workbench Styles */
+
+:root {
+  --primary-color: #1976d2;
+  --primary-light: #63a4ff;
+  --primary-dark: #004ba0;
+  --secondary-color: #673ab7;
+  --text-light: #ffffff;
+  --text-dark: #333333;
+  --background-light: #f5f5f5;
+  --border-radius: 8px;
+  --box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+body {
+  font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: var(--background-light);
+  color: var(--text-dark);
+}
+
+/* Workbench Container */
+.workbench-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Workbench Header */
+.workbench-header {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: var(--text-light);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
+  box-shadow: var(--box-shadow);
+}
+
+.workbench-header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.workbench-header p {
+  margin: 10px 0 0 0;
+  opacity: 0.8;
+  font-weight: 300;
+}
+
+/* Web Part Container */
+.webpart-container {
+  background: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin-bottom: 20px;
+  padding: 20px;
+  min-height: 400px;
+}
+
+/* Web Part Placeholder */
+.webpart-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: #666;
+}
+
+/* Spinner Animation */
+.spinner {
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top: 3px solid var(--primary-color);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Angular Container */
+.angular-container {
+  background: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin-bottom: 20px;
+  padding: 20px;
+  min-height: 100px;
+}
+
+/* Dev Info Panel */
+.dev-info-panel {
+  background: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 20px;
+}
+
+.dev-info-panel h3 {
+  margin-top: 0;
+  font-size: 18px;
+  color: var(--primary-color);
+}
+
+.dev-info-panel ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dev-info-panel li {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.dev-info-panel li:last-child {
+  border-bottom: none;
+}

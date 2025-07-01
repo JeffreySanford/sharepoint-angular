@@ -74,23 +74,53 @@ module.exports = {
         directory: path.join(__dirname, 'public'),
         publicPath: '/public',
       },
+      // Serve public/css and public/js directly from root paths to resolve 404s
+      {
+        directory: path.join(__dirname, 'public/css'),
+        publicPath: '/public/css',
+      },
+      {
+        directory: path.join(__dirname, 'public/js'),
+        publicPath: '/public/js',
+      },
       {
         directory: path.join(__dirname, 'src/webparts/uptimeStatus/angularApp/dist/angularApp'),
-        publicPath: '/',
+        publicPath: '/angular-app',
       }
     ],
     compress: true,
-    port: 4200,
+    port: 4321,
     proxy: [
+      {
+        context: [
+          '/main.js',
+          '/runtime.js',
+          '/polyfills.js',
+          '/vendor.js',
+          '/styles.css',
+          '/styles.js'
+        ],
+        target: 'http://localhost:4200',
+        changeOrigin: true,
+        secure: false,
+        logLevel: 'debug'
+      },
       {
         context: ['/api'],
         target: 'http://localhost:3000',
         changeOrigin: true,
-      },
+        secure: false
+      }
     ],
     open: false,
     historyApiFallback: {
       index: '/index.html',
+    },
+    // Add MIME type handling for CSS and JS files
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+      'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
     },
   },
   plugins: [
@@ -109,5 +139,10 @@ module.exports = {
       /\.\/test\/SystemJsMock$/,
       path.resolve(__dirname, 'webpack-stubs/SystemJsMock.js')
     ),
+    // Define environment variables
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('development'),
+      'process.env.MOCK_API': JSON.stringify(true),
+    }),
   ],
 };

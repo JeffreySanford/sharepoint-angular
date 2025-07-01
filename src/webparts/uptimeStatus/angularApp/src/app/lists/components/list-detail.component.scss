@@ -1,0 +1,556 @@
+.list-detail {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  .detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    gap: 24px;
+
+    .header-navigation {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      flex: 1;
+
+      .header-info {
+        flex: 1;
+
+        .list-title-section {
+          .list-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0 0 8px 0;
+            font-size: 2rem;
+            font-weight: 500;
+            line-height: 1.2;
+
+            mat-icon {
+              font-size: 2rem;
+              width: 2rem;
+              height: 2rem;
+            }
+          }
+
+          .list-meta {
+            mat-chip-set {
+              mat-chip {
+                font-size: 0.75rem;
+                height: 24px;
+                min-height: 24px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+
+      button {
+        mat-icon {
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+
+  .error-card {
+    margin-bottom: 24px;
+    background-color: #ffebee;
+    border-left: 4px solid #f44336;
+
+    mat-card-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #c62828;
+
+      mat-icon {
+        color: #f44336;
+      }
+    }
+  }
+
+  .overview-card {
+    margin-bottom: 24px;
+
+    .overview-content {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+
+      .overview-description {
+        flex: 1;
+
+        p {
+          margin: 0 0 16px 0;
+          color: var(--mat-text-secondary);
+          line-height: 1.5;
+        }
+
+        .overview-tags {
+          mat-chip-set {
+            mat-chip {
+              font-size: 0.75rem;
+            }
+          }
+        }
+      }
+
+      .overview-stats {
+        min-width: 300px;
+
+        .stat-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 16px;
+          margin-bottom: 16px;
+
+          .stat-item {
+            text-align: center;
+
+            .stat-value {
+              font-size: 1.5rem;
+              font-weight: 600;
+              color: var(--mat-primary-500);
+              line-height: 1;
+            }
+
+            .stat-label {
+              font-size: 0.75rem;
+              color: var(--mat-text-secondary);
+              margin-top: 4px;
+            }
+          }
+        }
+
+        .progress-bar {
+          height: 6px;
+          border-radius: 3px;
+        }
+      }
+    }
+  }
+
+  .controls-card {
+    margin-bottom: 24px;
+
+    .controls-row {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+
+      .search-field {
+        flex: 1;
+        min-width: 300px;
+      }
+
+      mat-form-field {
+        min-width: 120px;
+      }
+
+      .view-toggle {
+        margin-left: auto;
+      }
+    }
+  }
+
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px;
+    text-align: center;
+
+    mat-spinner {
+      margin-bottom: 16px;
+    }
+
+    p {
+      color: var(--mat-text-secondary);
+      margin: 0;
+    }
+  }
+
+  .items-content {
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 24px;
+
+      .item-card {
+        transition: all 0.2s ease;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        &.overdue {
+          border-left: 4px solid #f44336;
+        }
+
+        .item-avatar {
+          background-color: transparent;
+
+          mat-icon {
+            font-size: 24px;
+            width: 24px;
+            height: 24px;
+          }
+        }
+
+        mat-card-subtitle {
+          margin-top: 8px;
+
+          mat-chip-set {
+            mat-chip {
+              font-size: 0.75rem;
+              height: 24px;
+              min-height: 24px;
+
+              &.assignee-chip {
+                background-color: var(--mat-primary-100);
+                color: var(--mat-primary-700);
+              }
+            }
+          }
+        }
+
+        .item-description {
+          color: var(--mat-text-secondary);
+          font-size: 0.875rem;
+          line-height: 1.4;
+          margin-bottom: 16px;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .item-details {
+          margin-bottom: 16px;
+
+          .detail-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+            color: var(--mat-text-secondary);
+            margin-bottom: 4px;
+
+            mat-icon {
+              font-size: 16px;
+              width: 16px;
+              height: 16px;
+            }
+          }
+        }
+
+        .item-tags {
+          mat-chip-set {
+            mat-chip {
+              font-size: 0.7rem;
+              height: 20px;
+              min-height: 20px;
+            }
+          }
+        }
+      }
+    }
+
+    .table-card {
+      .items-table {
+        width: 100%;
+
+        .table-title {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+          }
+        }
+
+        .priority-cell {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+          }
+        }
+
+        .table-row {
+          transition: background-color 0.2s ease;
+
+          &:hover {
+            background-color: var(--mat-action-hover);
+          }
+
+          &.overdue-row {
+            background-color: #ffebee;
+            border-left: 4px solid #f44336;
+          }
+        }
+
+        .overdue-text {
+          color: #f44336;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .kanban-board {
+      display: flex;
+      gap: 24px;
+      overflow-x: auto;
+      padding-bottom: 16px;
+
+      .kanban-column {
+        min-width: 300px;
+        flex: 1;
+        border-radius: 8px;
+        padding: 16px;
+
+        .column-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 16px;
+
+          h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 500;
+          }
+
+          .item-count {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: var(--mat-text-primary);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+          }
+        }
+
+        .column-items {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          min-height: 200px;
+
+          .kanban-item {
+            cursor: pointer;
+            transition: all 0.2s ease;
+
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            }
+
+            &.overdue {
+              border-left: 4px solid #f44336;
+            }
+
+            .item-avatar {
+              background-color: transparent;
+
+              mat-icon {
+                font-size: 20px;
+                width: 20px;
+                height: 20px;
+              }
+            }
+
+            .kanban-title {
+              font-size: 0.875rem;
+              line-height: 1.2;
+            }
+
+            .kanban-description {
+              font-size: 0.75rem;
+              color: var(--mat-text-secondary);
+              margin: 0 0 12px 0;
+              display: -webkit-box;
+              -webkit-line-clamp: 2;
+              line-clamp: 2;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+            }
+
+            .kanban-meta {
+              display: flex;
+              gap: 8px;
+              flex-wrap: wrap;
+              font-size: 0.7rem;
+
+              .story-points {
+                background-color: var(--mat-primary-100);
+                color: var(--mat-primary-700);
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-weight: 500;
+              }
+
+              .assignee {
+                background-color: var(--mat-accent-100);
+                color: var(--mat-accent-700);
+                padding: 2px 6px;
+                border-radius: 4px;
+              }
+
+              .due-date {
+                color: var(--mat-text-secondary);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 64px 24px;
+
+      .empty-icon {
+        font-size: 64px;
+        width: 64px;
+        height: 64px;
+        color: var(--mat-text-disabled);
+        margin-bottom: 16px;
+      }
+
+      h2 {
+        margin: 0 0 8px 0;
+        color: var(--mat-text-primary);
+      }
+
+      p {
+        margin: 0 0 24px 0;
+        color: var(--mat-text-secondary);
+      }
+
+      button {
+        mat-icon {
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 64px 24px;
+  text-align: center;
+
+  .error-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #f44336;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    margin: 0 0 8px 0;
+    color: var(--mat-text-primary);
+  }
+
+  p {
+    margin: 0 0 24px 0;
+    color: var(--mat-text-secondary);
+  }
+
+  button {
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .list-detail {
+    padding: 16px;
+
+    .detail-header {
+      flex-direction: column;
+      gap: 16px;
+
+      .header-navigation {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+
+      .header-actions {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+    }
+
+    .overview-card .overview-content {
+      flex-direction: column;
+      gap: 16px;
+
+      .overview-stats {
+        min-width: unset;
+
+        .stat-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    }
+
+    .controls-card .controls-row {
+      flex-direction: column;
+      align-items: stretch;
+
+      .search-field,
+      mat-form-field {
+        min-width: unset;
+        width: 100%;
+      }
+
+      .view-toggle {
+        margin-left: 0;
+        align-self: center;
+      }
+    }
+
+    .items-content {
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .kanban-board {
+        flex-direction: column;
+
+        .kanban-column {
+          min-width: unset;
+        }
+      }
+    }
+  }
+}

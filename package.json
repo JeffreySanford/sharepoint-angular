@@ -9,17 +9,19 @@
     "node-sass": "npm:sass@^1.69.0"
   },
   "scripts": {
-    "build": "npx gulp bundle",
-    "clean": "npx gulp clean",
-    "test": "npx gulp test",
+    "build": "node -r ./node-compat.js ./node_modules/gulp/bin/gulp.js bundle",
+    "clean": "node -r ./node-compat.js ./node_modules/gulp/bin/gulp.js clean",
+    "test": "node -r ./node-compat.js ./node_modules/gulp/bin/gulp.js test",
     "build:angular": "cd src/webparts/uptimeStatus/angularApp && npm run build",
     "build:angular:update": "npm run build:angular && node scripts/update-angular-assets.js",
+    "update-workbench": "node scripts/update-workbench-assets.js",
+    "build:full": "npm run build:angular && npm run update-workbench",
     "start:api": "ts-node server/src/main.ts",
-    "start:spfx:legacy": "npx gulp serve --nobrowser",
-    "start:spfx:dev": "webpack serve --config webpack.dev.js",
+    "start:spfx": "webpack serve --config webpack.dev.js",
+    "start:angular": "cd src/webparts/uptimeStatus/angularApp && npm start",
     "build:spfx:dev": "webpack --config webpack.dev.js",
-    "start:dev": "concurrently \"npm run start:api\" \"npm run start:spfx:dev\"",
-    "start": "concurrently \"npm run start:api\" \"npm run start:spfx:dev\"",
+    "start:dev": "concurrently \"npm run start:api\" \"npm run start:spfx:dev\" \"npm run start:angular\"",
+    "start": "concurrently \"npm run start:api\" \"npm run start:angular\" \"npm run start:spfx\"",
     "update-assets": "node scripts/update-angular-assets.js"
   },
   "dependencies": {
@@ -32,7 +34,12 @@
     "@microsoft/sp-webpart-base": "1.11.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
+    "@nestjs/mongoose": "^9.2.2",
     "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/swagger": "^6.3.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "mongoose": "^7.8.7",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.0.0"
   },
@@ -48,6 +55,8 @@
     "gulp": "~3.9.1",
     "gulp-cli": "^2.3.0",
     "html-webpack-plugin": "^5.5.0",
+    "mongodb-memory-server": "^10.1.4",
+    "nx": "21.2.1",
     "path-browserify": "^1.0.1",
     "sass": "^1.69.0",
     "sass-loader": "^13.3.0",
@@ -58,5 +67,6 @@
     "webpack": "^5.80.0",
     "webpack-cli": "^5.1.0",
     "webpack-dev-server": "^4.15.0"
-  }
+  },
+  "nx": {}
 }

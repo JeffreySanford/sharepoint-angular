@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -16,6 +17,10 @@ async function bootstrap() {
     index: false,
   });
   
+  const mongod = await MongoMemoryServer.create();
+  const uri = mongod.getUri();
+  // Use this URI in your MongooseModule.forRoot(uri)
+
   const port = process.env.PORT || 3000;
   await app.listen(port);
   console.log(`NestJS server running on http://localhost:${port}`);

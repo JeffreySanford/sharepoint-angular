@@ -22,46 +22,61 @@ export default class UptimeStatusWebPart extends BaseClientSideWebPart<IUptimeSt
   public render(): void {
     // Initialize environment-specific features
     this.setupHotReload();
-    
+
     const config = this.getEnvironmentConfig();
     console.log(`🔧 SPFx Web Part initializing in ${config.isDevelopment ? 'development' : 'production'} mode...`);
-    
-    // Update the existing container instead of creating a new one
+
+    // Always render the container
     this.domElement.innerHTML = `
-      <div style="width: 100%; min-height: 600px; background: #fef7ff;">
-        <div style="text-align: center; padding: 40px; color: #666;">
-          <div style="display: inline-block; width: 30px; height: 30px; border: 3px solid #f3f3f3; border-top: 3px solid #1976d2; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-          <p style="margin-top: 15px;">SPFx Web Part Ready - ${config.isDevelopment ? 'Loading Angular (Dev Mode)' : 'Loading Angular'}...</p>
-          ${config.enableHotReload ? '<p style="font-size: 12px; color: #1976d2; margin-top: 8px;">🔥 Hot reload enabled</p>' : ''}
+      <div id="angular-app-container">
+        <div style="width: 100%; min-height: 600px; background: #fef7ff;">
+          <div style="text-align: center; padding: 40px; color: #666;">
+            <div style="display: inline-block; width: 30px; height: 30px; border: 3px solid #f3f3f3; border-top: 3px solid #1976d2; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            <p style="margin-top: 15px;">SPFx Web Part Ready - ${config.isDevelopment ? 'Loading Angular (Dev Mode)' : 'Loading Angular'}...</p>
+            ${config.enableHotReload ? '<p style="font-size: 12px; color: #1976d2; margin-top: 8px;">🔥 Hot reload enabled</p>' : ''}
+          </div>
         </div>
+        <style>
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        </style>
       </div>
-      <style>
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      </style>
     `;
-    
+
     // Signal to the integrated workbench that SPFx is ready
     setTimeout(() => {
       if (window.spfxReady) {
         console.log('🎯 Calling spfxReady callback...');
         window.spfxReady();
       } else {
-        console.log('⚠️ spfxReady callback not available yet, retrying...');
-        // If the workbench isn't ready yet, wait and try again
-        setTimeout(() => {
-          if (window.spfxReady) {
-            console.log('🎯 Calling spfxReady callback (retry)...');
-            window.spfxReady();
-          } else {
-            console.log('❌ spfxReady callback still not available');
-          }
-        }, 2000);
+        console.warn('⚠️ spfxReady callback not available');
       }
     }, 500);
+
+    const angularContainer = this.domElement.querySelector('#angular-app-container') as HTMLElement;
     
+    // Check if we're in the integrated workbench environment
+    const isIntegratedWorkbench = typeof window !== 'undefined' && 
+      ('angularIntegration' in window || 'DirectAngularIntegration' in window);
+    
+    if (!isIntegratedWorkbench) {
+      this.loadAngularAppDirect(angularContainer);
+    } else {
+      // Let the workbench integration script handle Angular bootstrapping
+      console.log('🛑 Skipping dynamic Angular asset loading in integrated workbench.');
+      
+      // Optionally display a message indicating we're in integrated mode
+      angularContainer.innerHTML = `
+        <div style="padding: 20px; text-align: center; background: #e3f2fd; border-radius: 8px; margin-top: 20px;">
+          <h3 style="margin-top: 0; color: #1976d2;">Integrated Workbench Mode</h3>
+          <p>The SPFx web part is running in integrated workbench mode.</p>
+          <p style="font-size: 12px; color: #666;">Angular integration is handled by the workbench environment.</p>
+        </div>
+      `;
+    }
+
     console.log('✅ SPFx Web Part ready for Angular integration');
   }
 
@@ -129,7 +144,18 @@ export default class UptimeStatusWebPart extends BaseClientSideWebPart<IUptimeSt
   }
 
   private async loadAngularAppDirect(container: HTMLElement): Promise<void> {
+    const isIntegratedWorkbench = typeof window !== 'undefined' && 
+      ('angularIntegration' in window || 'DirectAngularIntegration' in window);
+    
+    if (isIntegratedWorkbench) {
+      console.log('🛑 Skipping loadAngularAppDirect in integrated workbench.');
+      return;
+    }
+
     try {
+      // Inject Angular Material theme if missing
+      this.ensureAngularMaterialTheme();
+
       // Create the exact structure Angular expects
       container.innerHTML = `
         <div id="angular-wrapper" style="width: 100%; min-height: 600px; background: #fef7ff;">
@@ -150,60 +176,21 @@ export default class UptimeStatusWebPart extends BaseClientSideWebPart<IUptimeSt
             overflow: hidden;
             font-family: Roboto, "Segoe UI", sans-serif;
           }
-          /* Angular Material integration styles */
-          #angular-wrapper .mat-toolbar {
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
-          }
-          #angular-wrapper .mat-tab-group {
-            background: transparent !important;
-          }
-          #angular-wrapper .content-container {
-            padding: 0 !important;
-          }
-          #angular-wrapper .app-container {
-            background: #fef7ff !important;
-          }
-          /* Ensure Angular Material icons work */
-          #angular-wrapper .material-icons {
-            font-family: 'Material Icons' !important;
-            font-weight: normal;
-            font-style: normal;
-            font-size: 24px;
-            line-height: 1;
-            letter-spacing: normal;
-            text-transform: none;
-            display: inline-block;
-            white-space: nowrap;
-            word-wrap: normal;
-            direction: ltr;
-            -webkit-font-feature-settings: 'liga';
-            -webkit-font-smoothing: antialiased;
-          }
         </style>
       `;
 
-      // Load Google Fonts for Material Icons (in case they're not loaded)
-      if (!document.querySelector('link[href*="fonts.googleapis.com/icon"]')) {
-        const iconLink = document.createElement('link');
-        iconLink.rel = 'stylesheet';
-        iconLink.href = 'https://fonts.googleapis.com/icon?family=Material+Icons';
-        document.head.appendChild(iconLink);
+      // Try loading Angular assets with fallback
+      try {
+        await this.loadAngularAssets();
+      } catch (err) {
+        console.error('❌ Failed to load Angular assets, falling back to embedded content:', err);
+        this.loadFallbackDashboard();
+        return;
       }
 
-      // Load Roboto font
-      if (!document.querySelector('link[href*="fonts.googleapis.com/css"]')) {
-        const fontLink = document.createElement('link');
-        fontLink.rel = 'stylesheet';
-        fontLink.href = 'https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap';
-        document.head.appendChild(fontLink);
-      }
-
-      // Load Angular assets dynamically
-      await this.loadAngularAssets();
-      
-      // Wait for Angular to bootstrap
+      // Start monitoring for Angular bootstrap
       let attempts = 0;
-      const maxAttempts = 30; // 15 seconds total
+      const maxAttempts = 5; // Reduced to 5 attempts (2.5 seconds) before showing fallback content
       
       const checkAngularBootstrap = () => {
         attempts++;
@@ -212,44 +199,20 @@ export default class UptimeStatusWebPart extends BaseClientSideWebPart<IUptimeSt
         
         if (hasContent) {
           console.log('✅ Angular app successfully integrated into SPFx web part');
-          // Hide any loading indicators
+          // Hide loading indicators
           const loadingElements = container.querySelectorAll('.angular-loading');
           loadingElements.forEach(el => el.remove());
-          
-          // Trigger a custom event to notify that Angular is ready
-          window.dispatchEvent(new CustomEvent('angularReady', { 
-            detail: { source: 'spfx-integration' } 
-          }));
-          
+            
         } else if (attempts < maxAttempts) {
-          console.log(`🔄 Waiting for Angular bootstrap... (${attempts}/${maxAttempts})`);
+          if (appRoot) {
+            console.log(`🔄 Waiting for Angular bootstrap... (${attempts}/${maxAttempts})`);
+          } else {
+            console.warn('⚠️ <app-root> not found in container!');
+          }
           setTimeout(checkAngularBootstrap, 500);
         } else {
-          console.warn('⚠️ Angular app did not bootstrap within expected time');
-          
-          // Show a helpful error message but don't fail completely
-          const loadingElement = container.querySelector('.angular-loading');
-          if (loadingElement) {
-            loadingElement.innerHTML = `
-              <div style="text-align: center; padding: 40px;">
-                <div style="color: #f57c00; font-size: 24px; margin-bottom: 16px;">⚠️</div>
-                <h3 style="color: #f57c00; margin: 0 0 12px 0;">Angular Loading Delayed</h3>
-                <p style="color: #666; font-size: 14px; margin: 0 0 16px 0;">
-                  The Angular application is taking longer than expected to load.<br>
-                  This might be due to network conditions or build issues.
-                </p>
-                <button onclick="location.reload()" style="
-                  background: #1976d2; 
-                  color: white; 
-                  border: none; 
-                  padding: 8px 16px; 
-                  border-radius: 4px; 
-                  cursor: pointer;
-                  font-family: 'Segoe UI', sans-serif;
-                ">Retry</button>
-              </div>
-            `;
-          }
+          console.warn('⚠️ Angular app did not bootstrap within expected time, loading fallback content');
+          this.loadFallbackDashboard();
         }
       };
       
@@ -257,7 +220,7 @@ export default class UptimeStatusWebPart extends BaseClientSideWebPart<IUptimeSt
       
     } catch (error) {
       console.error('Error loading Angular app directly:', error);
-      throw error;
+      this.loadFallbackDashboard();
     }
   }
 
@@ -668,28 +631,28 @@ export default class UptimeStatusWebPart extends BaseClientSideWebPart<IUptimeSt
         });
       }
       
-      // Listen for file system changes (development mode)
-      let lastModified = Date.now();
-      const checkForUpdates = async () => {
-        try {
-          const response = await fetch('/angular-app/index.html', { method: 'HEAD' });
-          const lastModifiedHeader = response.headers.get('last-modified');
-          if (lastModifiedHeader) {
-            const serverLastModified = new Date(lastModifiedHeader).getTime();
-            if (serverLastModified > lastModified) {
-              console.log('🔄 Angular files updated, reloading...');
-              lastModified = serverLastModified;
-              // Small delay to ensure files are fully written
-              setTimeout(() => this.render(), 1000);
-            }
-          }
-        } catch (error) {
-          // Silently handle errors in development
-        }
-      };
-      
-      // Check for updates every 5 seconds in development
-      setInterval(checkForUpdates, 5000);
+      // Set up spfxReady callback for Angular integration
+      if (typeof window !== 'undefined') {
+        (window as any).spfxReady = () => {
+          console.log('✅ Angular app is ready for SPFx integration');
+          // Additional integration setup can go here
+        };
+      }
+    }
+  }
+
+  /**
+   * Ensures the Angular Material theme CSS is loaded.
+   * Loads the default indigo-pink theme if not present.
+   */
+  private ensureAngularMaterialTheme(): void {
+    const themeHref = 'https://cdn.jsdelivr.net/npm/@angular/material@15.2.10/prebuilt-themes/indigo-pink.css';
+    if (!document.querySelector(`link[href="${themeHref}"]`)) {
+      const themeLink = document.createElement('link');
+      themeLink.rel = 'stylesheet';
+      themeLink.href = themeHref;
+      document.head.appendChild(themeLink);
+      console.log('🎨 Angular Material theme injected:', themeHref);
     }
   }
 }

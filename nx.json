@@ -1,0 +1,40 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "defaultBase": "master",
+  "targetDefaults": {
+    "build": {
+      "outputs": [
+        "{projectRoot}/dist"
+      ],
+      "cache": true
+    },
+    "build:angular": {
+      "outputs": [
+        "{projectRoot}/dist"
+      ],
+      "cache": true
+    },
+    "clean": {
+      "cache": true
+    },
+    "test": {
+      "cache": true
+    },
+    "build:angular:update": {
+      "cache": true
+    },
+    "update-workbench": {
+      "cache": true
+    },
+    "start:api": {
+      "cache": true
+    },
+    "start:angular": {
+      "cache": true
+    },
+    "start": {
+      "cache": true
+    }
+  },
+  "nxCloudId": "6863bfa0f2798c3633b6aa78"
+}
