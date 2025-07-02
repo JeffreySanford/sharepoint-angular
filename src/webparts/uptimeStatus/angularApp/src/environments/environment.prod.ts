@@ -1,4 +1,9 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://api.yourdomain.com/api'  // Use full URL for production
+  apiBaseUrl: 'http://localhost:3000',  // Update this to your actual production API URL
+  endpoints: {
+    lists: '/api/lists',
+    metrics: '/api/metrics',
+    uptime: '/api/uptime'
+  }
 };

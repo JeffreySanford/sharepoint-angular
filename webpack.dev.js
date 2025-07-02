@@ -1,10 +1,13 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: 'development',
-  entry: './src/webparts/uptimeStatus/UptimeStatusWebPart.ts',
+  entry: {
+    main: './src/webparts/uptimeStatus/UptimeStatusWebPart.ts',
+    'public/js/integrated-workbench': './src/public/js/integrated-workbench.ts' // <-- add this line
+  },
   devtool: 'inline-source-map',
   module: {
     rules: [
@@ -57,7 +60,7 @@ module.exports = {
     }
   },
   output: {
-    filename: 'bundle.js',
+    filename: '[name].js', // <-- allow multiple entry points
     path: path.resolve(__dirname, 'dist'),
     clean: true,
     library: {
@@ -109,7 +112,12 @@ module.exports = {
         context: ['/api'],
         target: 'http://localhost:3000',
         changeOrigin: true,
-        secure: false
+        secure: false,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        },
+        logLevel: 'debug',
+        pathRewrite: { '^/api': '/api' } // Don't rewrite the path as it's already prefixed
       }
     ],
     open: false,

@@ -17,14 +17,14 @@ import {
   ActivityType
 } from '../interfaces/lists.interface';
 import { map, catchError, startWith, switchMap, shareReplay, tap } from 'rxjs/operators';
-import { environment } from '../../../environments/environment';
+
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class ListsService {
-  private readonly baseUrl = `${environment.apiBaseUrl}/lists`;
-  
+  private baseUrl = '/api/lists'; // Base URL for the lists API
   // BehaviorSubjects for reactive data streams
   private listsSubject = new BehaviorSubject<List[]>([]);
   private selectedListSubject = new BehaviorSubject<List | null>(null);

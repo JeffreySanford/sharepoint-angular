@@ -1,4 +1,10 @@
 export const environment = {
   production: false,
-  apiBaseUrl: '/api'  // Use relative URL for development to leverage webpack proxy
+  apiBaseUrl: '',  // Use empty string to leverage webpack dev server proxy
+  endpoints: {
+    lists: '/api/list',
+    metrics: '/api/metrics',
+    uptime: '/api/uptime'
+  }
 };
+

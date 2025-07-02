@@ -2,8 +2,13 @@
   "/api/*": {
     "target": "http://localhost:3000",
     "secure": false,
+    "logLevel": "debug",
     "changeOrigin": true,
-    "logLevel": "debug"
+    "headers": {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+      "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
+    }
   },
   "/main.js": {
     "target": "http://localhost:4200",

@@ -7,6 +7,14 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   
+  // Enable CORS for development
+  app.enableCors({
+    origin: ['http://localhost:4321', 'http://localhost:4200'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    credentials: true,
+    allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  });
+
   // Serve static files from the public directory
   app.useStaticAssets(join(__dirname, '..', '..', 'public'), {
     prefix: '/public/',

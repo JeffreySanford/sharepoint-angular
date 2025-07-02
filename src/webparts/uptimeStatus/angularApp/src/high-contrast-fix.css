@@ -1,0 +1,26 @@
+/* Replace deprecated -ms-high-contrast with forced-colors standard */
+@media (forced-colors: active) {
+  /* Apply high contrast styles here */
+  .visualization-panel {
+    border: 1px solid CanvasText;
+  }
+  .spinner {
+    border-color: CanvasText;
+  }
+  .card {
+    border: 1px solid CanvasText;
+  }
+}
+
+/* For backward compatibility during transition period */
+@media (-ms-high-contrast: active) {
+  .visualization-panel {
+    border: 1px solid WindowText;
+  }
+  .spinner {
+    border-color: WindowText;
+  }
+  .card {
+    border: 1px solid WindowText;
+  }
+}
