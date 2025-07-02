@@ -83,12 +83,11 @@
   <div *ngIf="!isLoading" class="lists-content">
     <!-- Cards view -->
     <div *ngIf="viewMode === 'cards'" class="lists-grid">
-      <mat-card 
-        *ngFor="let list of filteredLists; trackBy: trackByListId" 
-        class="list-card"
-        [class]="'type-' + getTypeClass(list.type)"
-        (click)="selectList(list)">
-        
+      <mat-card
+        *ngFor="let list of filteredLists; trackBy: trackByListId"
+        [ngClass]="['list-card', 'type-' + getTypeClass(list.type)]"
+        (click)="selectList(list)" [style.border]="'1px solid ' + list.color">
+
         <mat-card-header>
           <div mat-card-avatar class="list-avatar">
             <mat-icon [style.color]="list.color">{{ getTypeIcon(list.type) }}</mat-icon>
