@@ -3,10 +3,10 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import * as rateLimit from 'express-rate-limit';
+import rateLimit from 'express-rate-limit';
 
 // Security headers middleware
-function setSecurityHeaders(req, res, next) {
+function setSecurityHeaders(req: any, res: any, next: any) {
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-XSS-Protection', '1; mode=block');

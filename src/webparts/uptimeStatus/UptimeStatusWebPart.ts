@@ -1,9 +1,9 @@
-import { Version } from '@microsoft/sp-core-library';
 import {
   IPropertyPaneConfiguration,
   PropertyPaneTextField
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+import { Version } from '@microsoft/sp-core-library';
 
 export interface IUptimeStatusWebPartProps {
   description: string;
@@ -20,64 +20,13 @@ declare global {
 export default class UptimeStatusWebPart extends BaseClientSideWebPart<IUptimeStatusWebPartProps> {
 
   public render(): void {
-    // Initialize environment-specific features
-    this.setupHotReload();
-
-    const config = this.getEnvironmentConfig();
-    console.log(`🔧 SPFx Web Part initializing in ${config.isDevelopment ? 'development' : 'production'} mode...`);
-
-    // Always render the container
-    this.domElement.innerHTML = `
-      <div id="angular-app-container">
-        <div style="width: 100%; min-height: 600px; background: #fef7ff;">
-          <div style="text-align: center; padding: 40px; color: #666;">
-            <div style="display: inline-block; width: 30px; height: 30px; border: 3px solid #f3f3f3; border-top: 3px solid #1976d2; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-            <p style="margin-top: 15px;">SPFx Web Part Ready - ${config.isDevelopment ? 'Loading Angular (Dev Mode)' : 'Loading Angular'}...</p>
-            ${config.enableHotReload ? '<p style="font-size: 12px; color: #1976d2; margin-top: 8px;">🔥 Hot reload enabled</p>' : ''}
-          </div>
-        </div>
-        <style>
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        </style>
-      </div>
-    `;
-
-    // Signal to the integrated workbench that SPFx is ready
-    setTimeout(() => {
-      if (window.spfxReady) {
-        console.log('🎯 Calling spfxReady callback...');
-        window.spfxReady();
-      } else {
-        console.warn('⚠️ spfxReady callback not available');
-      }
-    }, 500);
-
-    const angularContainer = this.domElement.querySelector('#angular-app-container') as HTMLElement;
-    
-    // Check if we're in the integrated workbench environment
-    const isIntegratedWorkbench = typeof window !== 'undefined' && 
-      ('angularIntegration' in window || 'DirectAngularIntegration' in window);
-    
-    if (!isIntegratedWorkbench) {
-      this.loadAngularAppDirect(angularContainer);
-    } else {
-      // Let the workbench integration script handle Angular bootstrapping
-      console.log('🛑 Skipping dynamic Angular asset loading in integrated workbench.');
-      
-      // Optionally display a message indicating we're in integrated mode
-      angularContainer.innerHTML = `
-        <div style="padding: 20px; text-align: center; background: #e3f2fd; border-radius: 8px; margin-top: 20px;">
-          <h3 style="margin-top: 0; color: #1976d2;">Integrated Workbench Mode</h3>
-          <p>The SPFx web part is running in integrated workbench mode.</p>
-          <p style="font-size: 12px; color: #666;">Angular integration is handled by the workbench environment.</p>
-        </div>
-      `;
+    // Only render Angular integration
+    const containerId = 'angular-app-container';
+    if (!this.domElement.querySelector(`#${containerId}`)) {
+      this.domElement.innerHTML = `<div id="${containerId}"></div>`;
     }
-
-    console.log('✅ SPFx Web Part ready for Angular integration');
+    const angularContainer = this.domElement.querySelector(`#${containerId}`) as HTMLElement;
+    this.loadAngularAppDirect(angularContainer);
   }
 
   private async loadAngularApp(): Promise<void> {
@@ -388,7 +337,9 @@ export default class UptimeStatusWebPart extends BaseClientSideWebPart<IUptimeSt
     }
   }
 
-  protected dataVersion: Version = Version.parse('1.0');
+  protected get dataVersion(): any {
+    return Version.parse('1.0');
+  }
 
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
     return {
