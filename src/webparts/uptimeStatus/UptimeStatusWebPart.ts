@@ -337,6 +337,7 @@ export default class UptimeStatusWebPart extends BaseClientSideWebPart<IUptimeSt
     }
   }
 
+
   protected get dataVersion(): any {
     return Version.parse('1.0');
   }

@@ -4,7 +4,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
+import { AdminModule } from './admin/admin.module';
+import { AdminComponent } from './admin/admin.component';
+import { ManageTeamsComponent } from './admin/manage-teams/manage-teams.component';
+import { PiConfigurationComponent } from './admin/pi-configuration/pi-configuration.component';
+import { IntegrationsComponent } from './admin/integrations/integrations.component';
+import { SecurityPermissionComponent } from './admin/security-permission/security-permission.component';
 
 // Angular Material imports
 import { MatCardModule } from '@angular/material/card';
@@ -44,6 +50,22 @@ import { UptimeService } from './uptime.service';
 // Lists Module
 import { ListsModule } from './lists/lists.module';
 
+// Define main app routes
+import { ListsOverviewComponent } from './lists/components/lists-overview.component';
+
+const routes: Routes = [
+  { path: '', component: HomeComponent },
+  { path: 'metrics', component: MetricsComponent },
+  { path: 'reports', component: ReportsComponent },
+  { path: 'teams-messages', component: TeamsMessagesComponent },
+  { path: 'lists', component: ListsOverviewComponent },
+  {
+    path: 'admin',
+    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
+  },
+  { path: '**', redirectTo: '' }
+];
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -59,7 +81,6 @@ import { ListsModule } from './lists/lists.module';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule.forRoot([]),
     NgChartsModule,
     
     // Material Modules
@@ -87,8 +108,10 @@ import { ListsModule } from './lists/lists.module';
     MatSortModule,
     MatPaginatorModule,
     
-    // Feature Modules
-    ListsModule
+  // Feature Modules
+  ListsModule,
+  // Remove direct AdminModule import, use lazy loading
+  RouterModule.forRoot(routes)
   ],
   providers: [
     UptimeService

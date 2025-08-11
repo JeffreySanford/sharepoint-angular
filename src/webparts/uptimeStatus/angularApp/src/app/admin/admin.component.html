@@ -1,0 +1,44 @@
+<!-- Admin Panel Main Page -->
+<mat-card class="admin-card">
+  <mat-card-header>
+    <mat-card-title>
+      <mat-icon>admin_panel_settings</mat-icon>
+      Administration Panel
+    </mat-card-title>
+    <mat-card-subtitle>Manage your Agile SAFe environment</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="admin-actions">
+      <mat-list>
+        <mat-list-item routerLink="manage-teams">
+          <mat-icon matListItemIcon>group</mat-icon>
+          <div matListItemTitle>Manage Teams</div>
+          <div matListItemLine>Configure team settings and members</div>
+          <button mat-icon-button><mat-icon>arrow_forward</mat-icon></button>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item routerLink="pi-configuration">
+          <mat-icon matListItemIcon>timeline</mat-icon>
+          <div matListItemTitle>PI Configuration</div>
+          <div matListItemLine>Set up Program Increment schedules</div>
+          <button mat-icon-button><mat-icon>arrow_forward</mat-icon></button>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item routerLink="integrations">
+          <mat-icon matListItemIcon>extension</mat-icon>
+          <div matListItemTitle>Integrations</div>
+          <div matListItemLine>Connect external tools and services</div>
+          <button mat-icon-button><mat-icon>arrow_forward</mat-icon></button>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item routerLink="security-permission">
+          <mat-icon matListItemIcon>security</mat-icon>
+          <div matListItemTitle>Security & Permission</div>
+          <div matListItemLine>Manage access and permissions</div>
+          <button mat-icon-button><mat-icon>arrow_forward</mat-icon></button>
+        </mat-list-item>
+      </mat-list>
+    </div>
+    <router-outlet></router-outlet>
+  </mat-card-content>
+</mat-card>

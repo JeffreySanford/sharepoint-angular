@@ -12,11 +12,11 @@ export class ListsService {
   // Use the configured endpoints from environment
   getListsData(): Observable<any> {
     const endpoint = `${environment.apiBaseUrl}${environment.endpoints.lists}`;
-    debugger
+
     console.log(`Fetching lists data from: ${endpoint}`);
     
     return this.http.get(endpoint).pipe(
-      catchError(error => {
+      catchError(error => {true
         console.error('Failed to fetch lists data from server, using fallback data:', error);
         
         // Return mock data as fallback

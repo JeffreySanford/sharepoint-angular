@@ -8,8 +8,8 @@ import { ListsModule } from './lists/lists.module';
   imports: [
     ThrottlerModule.forRoot([
       {
-        ttl: 900, // 15 minutes
-        limit: 100, // max requests per IP
+        ttl: 60, // 1 minute
+        limit: 1000, // max requests per IP
       },
     ]),
     ReportsModule,
