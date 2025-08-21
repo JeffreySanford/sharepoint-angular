@@ -1,0 +1,12 @@
+{
+  "name": "angular-app",
+  "root": "src/webparts/uptimeStatus/angularApp",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd src/webparts/uptimeStatus/angularApp && npm start"
+      }
+    }
+  }
+}

@@ -45,7 +45,10 @@ async function bootstrap() {
   // Add security headers
   app.use(setSecurityHeaders);
 
-  // Add rate limiting
+  // Add rate limiting. In development we skip or allow disabling it via
+  // DISABLE_RATE_LIMIT=true to avoid local 429s while iterating.
+  const isProd = process.env.NODE_ENV === 'production';
+  const disableRateLimit = process.env.DISABLE_RATE_LIMIT === 'true';
   const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100, // limit each IP to 100 requests per windowMs
@@ -53,7 +56,12 @@ async function bootstrap() {
     standardHeaders: true,
     legacyHeaders: false,
   });
-  app.use('/api/', limiter);
+
+  if (isProd && !disableRateLimit) {
+    app.use('/api/', limiter);
+  } else {
+    console.log('Rate limiting is disabled for non-production or when DISABLE_RATE_LIMIT=true');
+  }
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
